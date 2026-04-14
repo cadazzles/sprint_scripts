@@ -95,9 +95,10 @@ def export_results_to_csv(results, output_csv):
     # Temporary list containing the header/footer information for the CSV. This gets prepended/appended to the results that get exported to CSV.
     csv_header = [('Access Time/Date', 'Username', 'Source IP Address')]
     csv_footer = [('Total failed attempts', len(results), '')]
+
     # This is NOT fast - it's O(n) - but it does the job on modern CPUs because our list of results has less than 1000 entries
     csv_contents = csv_header + results + csv_footer
-
+    
     # Export results to CSV file
     with open(output_csv, 'w', newline='') as output:
         csv_writer = csv.writer(output)
