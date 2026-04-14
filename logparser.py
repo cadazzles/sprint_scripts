@@ -13,6 +13,8 @@ import os
 import re
 import csv
 
+# Constants
+FAILED_LOGIN_PATTERN = r"^([A-Z][a-z]{2}\s+\d+\s\d{2}:\d{2}:\d{2}).*Failed\s+password\s+for\s+(?:invalid\s+user\s+)?(\S+)\s+from\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
 def main():
     """ Primary script entry point -- takes parsed arguments from the command-line and passes them to the relevant functions, then outputs results """
     log_file, output_csv = parse_args()
@@ -65,7 +67,7 @@ def extract_data(log_file):
             # Only work on lines containing "failed password", as these are the lines we are primarily concerned with
             if "failed password" in line.lower():
                 # regex matching: isolates date/time, username, and source ip address from each line. accounts for instances of "invalid user"
-                matched_string = re.findall(r"^([A-Z][a-z]{2}\s+\d+\s\d{2}:\d{2}:\d{2}).*Failed\s+password\s+for\s+(?:invalid\s+user\s+)?(\S+)\s+from\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line)
+                matched_string = re.findall(FAILED_LOGIN_PATTERN, line)
                 
                 # if the pattern is successfully matched + isolated, add it to our list of failed logins
                 if matched_string:
