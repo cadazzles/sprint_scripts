@@ -1,4 +1,5 @@
-# logparser.py
+![logparser.py](./media/logo.png)
+
 Quick and dirty auth.log parser written in Python featuring human-readable output and automatic CSV export.
 Created for SEC444: Security Automation as part of the first sprint (sprint1).
 
