@@ -34,7 +34,8 @@ python3 logparser.py <path_to_log_file> <optional: output_csv>
 No known issues so far. Comprehensive testing on this script has yet to be done.
 
 ## Authors
-Alec Wandy - [@cadazzles](https://github.com/cadazzles)
+Alec Wandy - [@cadazzles](https://github.com/cadazzles)\
+This script was largely written without assistance from generative AI tools (outside of regex! I hate regex).
 
 ## License
 This project is licensed under the MIT License - see the LICENSE.md file for details.
