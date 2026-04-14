@@ -72,13 +72,15 @@ def extract_data(log_file):
     with open(log_file, 'r') as log:
         for line in log:
             # Only work on lines containing "failed password", as these are the lines we are primarily concerned with
-            if "failed password" in line.lower():
-                # regex matching: isolates date/time, username, and source ip address from each line. accounts for instances of "invalid user"
-                matched_string = re.findall(FAILED_LOGIN_PATTERN, line)
+            if "failed password" not in line.lower():
+                continue
+
+            # regex matching: isolates date/time, username, and source ip address from each line. accounts for instances of "invalid user"
+            matched_string = re.findall(FAILED_LOGIN_PATTERN, line)
                 
-                # if the pattern is successfully matched + isolated, add it to our list of failed logins
-                if matched_string:
-                    failed_logins += matched_string
+            # if the pattern is successfully matched + isolated, add it to our list of failed logins
+            if matched_string:
+                failed_logins += matched_string
     
     return failed_logins
 
