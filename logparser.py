@@ -14,15 +14,15 @@ import re
 import csv
 
 def main():
+    """ Primary script entry point -- takes parsed arguments from the command-line and passes them to the relevant functions, then outputs results """
     log_file, output_csv = parse_args()
     results = extract_data(log_file)
 
     print_results_to_console(results)
     export_results_to_csv(results, output_csv)
 
-
-# Exception handling for command-line arguments
 def parse_args():
+    """ Exception handling for command-line arguments """
     try:
         # Attempt to set log file for analysis as first argument, otherwise error out if no argument is given
         log_file = sys.argv[1]
@@ -42,7 +42,7 @@ def parse_args():
         # Ensure that the log file provided does not only contain whitespace
         with open(log_file, 'r') as log:
             if not log.read().strip():
-                print(f'Error: auth.log file ({log_file}) provided is blank (contains only whitespace)')
+                print(f'Error: auth.log file ({log_file}) provided is blank (contains only whitespace). Try another file.')
                 sys.exit(1)
         
         # Make sure the output csv ends with a .csv extension; add it if it doesn't have one
@@ -55,8 +55,8 @@ def parse_args():
         print("Usage: python3 logparser.py <path_to_log_file> <optional: output_csv>")
         sys.exit(1)
 
-# Extract relevant data from supplied auth.log file
 def extract_data(log_file):
+    """ Extract relevant data from supplied auth.log file """
     # Create list to hold every regex-matched failed login
     failed_logins = []
 
@@ -73,15 +73,15 @@ def extract_data(log_file):
     
     return failed_logins
 
-# Print results to console with indicators for which data corresponds to which relevant field
 def print_results_to_console(results):
+    """ Print results to console with indicators for which data corresponds to which relevant field """
     total_failed_attempts = len(results)
     for timestamp, username, ip in results:
         print(f'Access Time/Date: {timestamp}, Username: {username}, Source IP Address: {ip}')
     print(f'Total failed attempts: {total_failed_attempts}')
 
-# Print results to the designated output CSV file in a similar format to the console
 def export_results_to_csv(results, output_csv):
+    """ Print results to the designated output CSV file in a similar format to the console """
     # Temporary list containing the header/footer information for the CSV. This gets prepended/appended to the results that get exported to CSV.
     csv_header = [('Access Time/Date', 'Username', 'Source IP Address')]
     csv_footer = [('Total failed attempts', len(results), '')]
@@ -93,5 +93,6 @@ def export_results_to_csv(results, output_csv):
         csv_writer = csv.writer(output)
         csv_writer.writerows(csv_contents)
 
+# Run main() if called directly from cmd, otherwise function as an import library
 if __name__ == '__main__':
     main()
