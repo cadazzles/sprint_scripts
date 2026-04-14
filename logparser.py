@@ -32,10 +32,12 @@ def parse_args():
         # Ensure that the path to the log file provided is actually an existing file
         if not os.path.isfile(log_file):
             print(f'Error: {log_file} does not exist. Try another file.')
+            sys.exit(1)
 
         # Ensure that the log file provided is not completely empty (i.e. size = 0 bytes)
         if os.path.getsize(log_file) == 0:
             print(f'Error: auth.log file {log_file} is empty. Try another file.')
+            sys.exit(1)
 
         # Ensure that the log file provided does not only contain whitespace
         with open(log_file, 'r') as log:
