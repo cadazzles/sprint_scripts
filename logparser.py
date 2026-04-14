@@ -14,7 +14,12 @@ import re
 import csv
 
 def main():
-    # Exception handling for command-line arguments
+    log_file, output_csv = parse_args()
+    print(log_file)
+    print(output_csv)
+
+# Exception handling for command-line arguments
+def parse_args():
     try:
         # Attempt to set log file for analysis as first argument, otherwise error out if no argument is given
         log_file = sys.argv[1]
@@ -25,6 +30,11 @@ def main():
         if not os.path.isfile(log_file):
             print(log_file + " does not exist. Try another file.")
         
+        # Make sure the output csv ends with a .csv extension; add it if it doesn't have one
+        if not output_csv.endswith(".csv"):
+            output_csv = output_csv + ".csv"
+
+        return log_file, output_csv
     except IndexError:
         # Exit with error code 1 and print help message if no log file is provided
         print("Usage: python3 logparser.py <path_to_log_file> <optional: output_csv>")
