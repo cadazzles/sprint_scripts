@@ -32,23 +32,10 @@ def parse_args():
         log_file = sys.argv[1]
         # If a name for the output csv is provided, use it - otherwise, use a default name of "output.csv"
         output_csv = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT_CSV
-
-        # Ensure that the path to the log file provided is actually an existing file
-        if not os.path.isfile(log_file):
-            print(f'Error: {log_file} does not exist. Try another file.')
-            sys.exit(1)
-
-        # Ensure that the log file provided is not completely empty (i.e. size = 0 bytes)
-        if os.path.getsize(log_file) == 0:
-            print(f'Error: auth.log file {log_file} is empty. Try another file.')
-            sys.exit(1)
-
-        # Ensure that the log file provided does not only contain whitespace
-        with open(log_file, 'r') as log:
-            if not log.read().strip():
-                print(f'Error: auth.log file ({log_file}) provided is blank (contains only whitespace). Try another file.')
-                sys.exit(1)
         
+        # Run validation checks on the given log file
+        validate_log_file(log_file)
+
         # Make sure the output csv ends with a .csv extension; add it if it doesn't have one
         if not output_csv.endswith(".csv"):
             output_csv = output_csv + ".csv"
@@ -58,6 +45,24 @@ def parse_args():
         # Exit with error code 1 and print help message if no log file is provided
         print("Usage: python3 logparser.py <path_to_log_file> <optional: output_csv>")
         sys.exit(1)
+
+def validate_log_file(log_file):
+    """ Validates that the log file actually exists and contains data to be analyzed """
+    # Ensure that the path to the log file provided is actually an existing file
+    if not os.path.isfile(log_file):
+        print(f'Error: {log_file} does not exist. Try another file.')
+        sys.exit(1)
+
+    # Ensure that the log file provided is not completely empty (i.e. size = 0 bytes)
+    if os.path.getsize(log_file) == 0:
+        print(f'Error: auth.log file {log_file} is empty. Try another file.')
+        sys.exit(1)
+
+    # Ensure that the log file provided does not only contain whitespace
+    with open(log_file, 'r') as log:
+        if not log.read().strip():
+            print(f'Error: auth.log file ({log_file}) provided is blank (contains only whitespace). Try another file.')
+            sys.exit(1)
 
 def extract_data(log_file):
     """ Extract relevant data from supplied auth.log file """
