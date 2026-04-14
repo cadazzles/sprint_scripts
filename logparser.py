@@ -92,6 +92,9 @@ def export_results_to_csv(results, output_csv):
     with open(output_csv, 'w', newline='') as output:
         csv_writer = csv.writer(output)
         csv_writer.writerows(csv_contents)
+    
+    # Inform the user that a CSV version of the results was created
+    print(f'A CSV version of the results was outputted to {output_csv}.')
 
 # Run main() if called directly from cmd, otherwise function as an import library
 if __name__ == '__main__':
