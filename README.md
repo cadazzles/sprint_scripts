@@ -30,6 +30,9 @@ python3 logparser.py <path_to_log_file> <optional: output_csv>
 `path_to_log_file`: An absolute or relative path leading to a valid Linux auth.log file.\
 `output_csv`: **[OPTIONAL]** An absolute or relative path denoting where the CSV version of the results should be outputted to. Defaults to `output.csv` in the current working directory.
 
+#### Example output
+![usage-example.png](./media/usage-example.png)
+
 ## Known Issues
 No known issues so far. Comprehensive testing on this script has yet to be done.
 
