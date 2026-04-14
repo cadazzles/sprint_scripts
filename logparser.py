@@ -15,8 +15,10 @@ import csv
 
 def main():
     log_file, output_csv = parse_args()
-    print(log_file)
-    print(output_csv)
+    results = extract_data(log_file)
+
+    for timestamp, username, ip in results:
+        print(f'Timestamp: {timestamp}, Username: {username}, Source IP Address: {ip}')
 
 # Exception handling for command-line arguments
 def parse_args():
@@ -28,7 +30,17 @@ def parse_args():
 
         # Ensure that the path to the log file provided is actually an existing file
         if not os.path.isfile(log_file):
-            print(log_file + " does not exist. Try another file.")
+            print(f'Error: {log_file} does not exist. Try another file.')
+
+        # Ensure that the log file provided is not completely empty (i.e. size = 0 bytes)
+        if os.path.getsize(log_file) == 0:
+            print(f'Error: auth.log file {log_file} is empty. Try another file.')
+
+        # Ensure that the log file provided does not only contain whitespace
+        with open(log_file, 'r') as log:
+            if not log.read().strip():
+                print(f'Error: auth.log file ({log_file}) provided is blank (contains only whitespace)')
+                sys.exit(1)
         
         # Make sure the output csv ends with a .csv extension; add it if it doesn't have one
         if not output_csv.endswith(".csv"):
@@ -39,6 +51,19 @@ def parse_args():
         # Exit with error code 1 and print help message if no log file is provided
         print("Usage: python3 logparser.py <path_to_log_file> <optional: output_csv>")
         sys.exit(1)
+
+def extract_data(log_file):
+    # Create list to hold every regex-matched failed login
+    failed_logins = []
+    with open(log_file, 'r') as log:
+        for line in log:
+            # Only work on lines containing "failed password", as these are the lines we are primarily concerned with
+            if "failed password" in line.lower():
+                # regex matching: isolates date/time, username, and source ip address from each line. accounts for instances of "invalid user"
+                matched_string = re.findall(r"^([A-Z][a-z]{2}\s+\d+\s\d{2}:\d{2}:\d{2}).*Failed\s+password\s+for\s+(?:invalid\s+user\s+)?(\S+)\s+from\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})", line)
+                if matched_string:
+                    failed_logins += matched_string
+    return failed_logins
 
 if __name__ == '__main__':
     main()
