@@ -18,7 +18,7 @@ This script uses no external dependencies; all functions are performed using Pyt
 
 ### Installation
 1. Navigate to the `sprint1-logparser` branch. If you can see these instructions, you're already here.
-2. Clone the repository via Git by running `git clone https://github.com/cadazzles/sprint_scripts.git` in a terminal, or download a ZIP copy of the current repository state by pressing the **Code** button.
+2. Clone the repository via Git by running `git clone -b sprint1-logparser https://github.com/cadazzles/sprint_scripts.git` in a terminal, or download a ZIP copy of the current repository state by pressing the **Code** button.
 3. Run the script using `python3 logparser.py`. See usage instructions below.
 
 ### Usage instructions
