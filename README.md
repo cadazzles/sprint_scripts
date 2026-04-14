@@ -1,2 +1,1 @@
-# sprint_scripts
-BAS Cybersecurity Automation course scripts
+# sprint1-logparser
