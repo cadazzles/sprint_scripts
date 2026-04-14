@@ -15,6 +15,8 @@ import csv
 
 # Constants
 FAILED_LOGIN_PATTERN = r"^([A-Z][a-z]{2}\s+\d+\s\d{2}:\d{2}:\d{2}).*Failed\s+password\s+for\s+(?:invalid\s+user\s+)?(\S+)\s+from\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
+DEFAULT_OUTPUT_CSV = "output.csv"
+
 def main():
     """ Primary script entry point -- takes parsed arguments from the command-line and passes them to the relevant functions, then outputs results """
     log_file, output_csv = parse_args()
@@ -29,7 +31,7 @@ def parse_args():
         # Attempt to set log file for analysis as first argument, otherwise error out if no argument is given
         log_file = sys.argv[1]
         # If a name for the output csv is provided, use it - otherwise, use a default name of "output.csv"
-        output_csv = sys.argv[2] if len(sys.argv) > 2 else 'output.csv'
+        output_csv = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT_CSV
 
         # Ensure that the path to the log file provided is actually an existing file
         if not os.path.isfile(log_file):
