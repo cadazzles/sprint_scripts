@@ -12,10 +12,11 @@ import sys
 import os
 import re
 import csv
+from datetime import datetime
 
 # Constants
 FAILED_LOGIN_PATTERN = r"^([A-Z][a-z]{2}\s+\d+\s\d{2}:\d{2}:\d{2}).*Failed\s+password\s+for\s+(?:invalid\s+user\s+)?(\S+)\s+from\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
-DEFAULT_OUTPUT_CSV = "output.csv"
+DEFAULT_OUTPUT_CSV = f'output_{datetime.now():%Y%m%d-%H%M%S%f}.csv'
 
 def main():
     """ Primary script entry point -- takes parsed arguments from the command-line and passes them to the relevant functions, then outputs results """
