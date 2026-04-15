@@ -29,7 +29,7 @@ def main():
 def parse_args():
     """ Exception handling for command-line arguments """
     try:
-        # Attempt to use log file from specified path for analysis - error out if nothing is supplied by user
+        # Attempt to use log file from specified path for analysis - IndexError is handled if no argument is provided
         log_file = sys.argv[1]
     except IndexError:
         # Exit with error code 1 and print help message if no arguments are provided
