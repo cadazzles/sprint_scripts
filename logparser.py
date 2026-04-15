@@ -81,7 +81,7 @@ def extract_data(log_file):
 def print_results_to_console(results):
     """ Print results to console with indicators for which data corresponds to which relevant field """
     for timestamp, username, ip in results:
-        print(f'Access Time/Date: {timestamp}, Username: {username}, Source IP Address: {ip}')
+        print(f'Access Time/Date: {timestamp} | Username: {username:<13} | Source IP Address: {ip}')
     print(f'Total failed attempts: {len(results)}')
 
 def export_results_to_csv(results, output_csv):
