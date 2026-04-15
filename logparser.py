@@ -44,7 +44,7 @@ def parse_args():
         return log_file, output_csv
     except IndexError:
         # Exit with error code 1 and print help message if no log file is provided
-        print("Usage: python3 logparser.py <path_to_log_file> <optional: output_csv>")
+        print("Usage: python3 logparser.py <path_to_log_file> <optional: path_to_output_csv>")
         sys.exit(1)
 
 def validate_log_file(log_file):
