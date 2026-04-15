@@ -15,8 +15,8 @@ import csv
 from datetime import datetime
 
 # Constants
-FAILED_LOGIN_PATTERN = r"^([A-Z][a-z]{2}\s+\d+\s\d{2}:\d{2}:\d{2}).*Failed\s+password\s+for\s+(?:invalid\s+user\s+)?(\S+)\s+from\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
-DEFAULT_OUTPUT_CSV = f'output_{datetime.now():%Y%m%d-%H%M%S%f}.csv'
+FAILED_LOGIN_REGEX = r"^([A-Z][a-z]{2}\s+\d+\s\d{2}:\d{2}:\d{2}).*Failed\s+password\s+for\s+(?:invalid\s+user\s+)?(\S+)\s+from\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
+DEFAULT_CSV_FILENAME = f'output_{datetime.now():%Y%m%d-%H%M%S%f}.csv'
 
 def main():
     """ Primary script entry point -- takes parsed arguments from the command-line and passes them to the relevant functions, then outputs results """
@@ -32,7 +32,7 @@ def parse_args():
         # Attempt to set log file for analysis as first argument, otherwise error out if no argument is given
         log_file = sys.argv[1]
         # If a name for the output csv is provided, use it - otherwise, use a default name of "output.csv"
-        output_csv = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT_CSV
+        output_csv = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_CSV_FILENAME
         
         # Run validation checks on the given log file
         validate_log_file(log_file)
@@ -77,7 +77,7 @@ def extract_data(log_file):
                 continue
 
             # regex matching: isolates date/time, username, and source ip address from each line. accounts for instances of "invalid user"
-            matched_string = re.findall(FAILED_LOGIN_PATTERN, line)
+            matched_string = re.findall(FAILED_LOGIN_REGEX, line)
                 
             # if the pattern is successfully matched + isolated, add it to our list of failed logins
             if matched_string:
