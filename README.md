@@ -24,11 +24,11 @@ This script uses no external dependencies; all functions are performed using Pyt
 
 ### Usage instructions
 ```
-python3 logparser.py <path_to_log_file> <optional: output_csv>
+python3 logparser.py <path_to_log_file> <optional: path_to_output_csv>
 ```
 #### Arguments
 `path_to_log_file`: An absolute or relative path leading to a valid Linux auth.log file.\
-`output_csv`: **[OPTIONAL]** An absolute or relative path denoting where the CSV version of the results should be outputted to. Defaults to `output.csv` in the current working directory.
+`path_to_output_csv`: **[OPTIONAL]** An absolute or relative path denoting where the CSV version of the results should be outputted to. Defaults to `output_<current_date>.csv` in the current working directory.
 
 #### Example output
 ![usage-example.png](./media/usage-example.png)
