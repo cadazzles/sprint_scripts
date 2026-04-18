@@ -81,15 +81,15 @@ def extract_data(log_file):
 def print_results_to_console(results):
     """ Print results to console with indicators for which data corresponds to which relevant field """
     for timestamp, username, ip in results:
-        print(f'Access Time/Date: {timestamp} | Username: {username:<13} | Source IP Address: {ip}')
+        print(f'Attempt Time/Date: {timestamp} | Username: {username:<13} | Source IP Address: {ip}')
     print(f'Total failed attempts: {len(results)}')
 
 def export_results_to_csv(results, output_csv):
     """ Print results to the designated output CSV file in a similar format to the console """
     # Temporary list containing the header/footer information for the CSV. This gets prepended/appended to the results that get exported to CSV.
-    csv_header = [('Access Time/Date', 'Username', 'Source IP Address')]
+    csv_header = [('Attempt Time/Date', 'Username', 'Source IP Address')]
     csv_footer = [('Total failed attempts', len(results), '')]
-    # This is NOT fast - it's O(n) - but it does the job on modern CPUs because our list of results has less than 1000 entries
+    # This is NOT fast - it's O(n) - but it does the job for smaller logs
     csv_contents = csv_header + results + csv_footer
     # Export results to CSV file
     with open(output_csv, 'w', newline='') as output:

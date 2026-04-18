@@ -7,7 +7,7 @@ Created for SEC444: Security Automation as part of the first sprint (sprint1).
 logparser.py parses a Linux auth.log file to extract security data (for the purposes of this assignment: failed login attempts).
 Regex pattern matching is then performed on a line-by-line basis to create a structured set of three main data points from each login attempt: 
 
-- Access Time/Date
+- Attempt Time/Date
 - Username
 - Source IP Address
 
