@@ -36,7 +36,7 @@ python3 logparser.py <path_to_log_file> <optional: path_to_output_csv>
 ![Animated GIF with usage example](./media/usage_example_opt.gif)
 
 ## Known Issues
-No known issues so far. Comprehensive testing on this script has yet to be done.
+No known issues so far.
 
 **NOTE:** This script was developed and tested using Ubuntu 24.04 LTS. While there is nothing here preventing compatibility with Windows and macOS, please keep this in mind.
 
