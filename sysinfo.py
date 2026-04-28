@@ -13,6 +13,8 @@ import subprocess
 import platform
 import distro
 import psutil
+import time
+from datetime import datetime, timedelta
 
 # Constants
 DEFAULT_OUTPUT_FILE = "sysinfo"
@@ -22,10 +24,12 @@ def main():
     """ Primary script entry point - handles parsed cmd arguments and passes them to information gathering functions before outputting """
     check_basic_compat()
     output_mode, output_file = parse_args()
-    hostname = get_hostname()
+    hostname, uptime = get_hostname_uptime()
     os_info = get_os_info()
     cpu_info = get_cpu_info()
     mem_info = get_mem_info()
+    disk_info = get_disk_info()
+    print(disk_info)
 
 def check_basic_compat():
     """ Basic script compatibility check. If the host system is not one of the supported three, immediately quit with an error. """
@@ -61,9 +65,15 @@ def parse_args():
 
     return output_mode, output_file
 
-def get_hostname():
-    # Return best-guess for system hostname
-    return platform.node()
+def get_hostname_uptime():
+    # Use best-guess for system hostname
+    hostname = platform.node()
+
+    # Get time of last system boot (seconds since UNIX epoch)
+    boot_timestamp = psutil.boot_time()
+    # Turn into timestamp, format into human-readable duration (no microseconds)
+    uptime_duration = str(timedelta(seconds=time.time() - boot_timestamp)).split('.')[0]
+    return hostname, uptime_duration
 
 def get_os_info():
     # Generate list for OS/platform information
@@ -132,7 +142,10 @@ def get_disk_info():
     disk_info = []
     try:
         # Get used space, total available space, and percentage used
-        disk_info.extend([psutil.disk_usage().used, psutil.disk_usage().total, psutil.disk_usage().percent])
+        if CLIENT_PLATFORM == "win32":
+            disk_info.extend([psutil.disk_usage('C:').used, psutil.disk_usage('C:').total, psutil.disk_usage('C:').percent])
+        else:
+            disk_info.extend([psutil.disk_usage('/').used, psutil.disk_usage('/').total, psutil.disk_usage('/').percent])
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
         print("Exiting...")
