@@ -84,11 +84,11 @@ def get_os_info():
         elif CLIENT_PLATFORM == "darwin":
             # Retrieves the following information for macOS-based systems
             # macOS, macOS version (i.e. "26.4.1"), Darwin version (i.e. "25.4"), OS architecture (i.e. arm64)
-            os_info.extend(["macOS", platform.mac_ver()[0], platform.version(), platform.machine()])
+            os_info.extend(["macOS", platform.mac_ver()[0], platform.release(), platform.machine()])
         elif CLIENT_PLATFORM == "linux":
             # Retrieves the following information for Linux-based systems
             # Distribution name (i.e. Ubuntu Server), Distribution version (i.e. 24.04.1 Noble Numbat), Linux kernel version (i.e. 6.6.89-ubuntu-1-1), OS architecture (i.e. AMD64)
-            os_info.extend([distro.name(pretty=True), distro.version(pretty=True, best=True), platform.version(), platform.machine()])
+            os_info.extend([distro.name(pretty=True), distro.version(pretty=True, best=True), platform.release(), platform.machine()])
     except Exception as e:
         # Exit w/ error if we run into any snags (most of the time, this process should succeed)
         print(f'ERROR: Critical error occurred while attempting to gather OS information: {e}')
