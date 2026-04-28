@@ -9,6 +9,7 @@
 
 # Imports
 import sys
+import subprocess
 import platform
 import distro
 
@@ -90,8 +91,26 @@ def get_os_info():
         sys.exit(1)
     return os_info
 
+def get_cpu_info():
+    # Generate list for CPU information
 
+    cpu_info = []
+    try:
+        # Get CPU model name (i.e. AMD Ryzen 7 5800X3D 8-Core Processor, Apple M2, etc.)
+        if CLIENT_PLATFORM == "win32":
+            cpu_info.append(subprocess.check_output("wmic cpu get name", shell=True).decode().strip().split('\n')[1].strip())
+        elif CLIENT_PLATFORM == "linux":
+            cpu_info.append(subprocess.check_output("lscpu | grep 'Model name'", shell=True).decode().split(':')[1].strip())
+        elif CLIENT_PLATFORM == "darwin":
+            cpu_info.append(subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"]).decode().strip())
 
+        
+    except Exception as e:
+        print(f'ERROR: Critical error occurred while attempting to obtain CPU information: {e}')
+        print("Exiting...")
+        sys.exit(1)
+    
+    
 
 # Run main() if called directly from cmd, otherwise function as an importable library
 if __name__ == '__main__':
