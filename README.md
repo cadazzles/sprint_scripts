@@ -34,7 +34,7 @@ python3 sysinfo.py <screen | csv | json> <output_file>
 #### Arguments
 `screen`: Outputs all gathered information to the terminal (standard output).\
 `csv`: Outputs all gathered information to a CSV file.\
-`json`: Outputs all gathered information to a JSON file.\
+`json`: Outputs all gathered information to a JSON file.
 
 `output_file`: Absolute or relative path to the desired output file when operating in CSV or JSON mode. Defaults to `sysinfo.csv` or `sysinfo.json` in the current working directory.
 
