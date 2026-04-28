@@ -1,4 +1,4 @@
-# sysinfo.py
+![sysinfo.py](./media/ascii-logo.png)
 
 Quick and dirty system information grabber written in Python featuring multiple-format output and comprehensive multiplatform support.
 Created for SEC444: Security Automation as part of the second sprint (sprint2).
