@@ -10,6 +10,7 @@
 # Imports
 import sys
 import platform
+import distro
 
 # Constants
 DEFAULT_OUTPUT_FILE = "sysinfo"
@@ -20,7 +21,7 @@ def main():
     check_basic_compat()
     output_mode, output_file = parse_args()
     hostname = get_hostname()
-    print(hostname)
+    os_info = get_os_info()
 
 def check_basic_compat():
     """ Basic script compatibility check. If the host system is not one of the supported three, immediately quit with an error. """
@@ -57,7 +58,31 @@ def parse_args():
     return output_mode, output_file
 
 def get_hostname():
+    # Return best-guess for system hostname
     return platform.node()
+
+def get_os_info():
+    # Generate list for OS/platform information
+    os_info = []
+    if CLIENT_PLATFORM == "win32":
+        os_info.append(platform.system()) # Windows name, i.e. "Windows"
+        os_info.append(platform.release()) # Windows marketing version, i.e. "11"
+        os_info.append(platform.win32_edition()) # Windows feature edition, i.e. "Professional"
+        os_info.append(platform.version()) # Windows build version, i.e. "10.0.26200"
+        os_info.append(platform.machine()) # OS architecture, i.e. "AMD64"
+    if CLIENT_PLATFORM == "darwin":
+        os_info.append("macOS") # Use macOS for identifiability instead of Darwin
+        os_info.append(platform.mac_ver()[0]) # macOS version, i.e. "26.4.1" - Darwin kernel and macOS versions often don't match
+        os_info.append(platform.version()) # Darwin version, i.e. "25.4"
+        os_info.append(platform.machine()) # OS architecture, i.e. "arm64"
+    if CLIENT_PLATFORM == "linux":
+        os_info.append(distro.name(pretty=True)) # Distribution name, i.e. "Ubuntu Server"
+        os_info.append(distro.version(pretty=True, best=True)) # Distribution version, i.e. "24.04.1 Noble Numbat"
+        os_info.append(platform.version()) # Linux kernel version, i.e. "6.6.89-ubuntu-1-1"
+        os_info.append(platform.machine()) # OS architecture, i.e. "AMD64"
+    return os_info
+
+
 
 
 # Run main() if called directly from cmd, otherwise function as an importable library
