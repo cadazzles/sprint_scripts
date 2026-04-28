@@ -22,7 +22,11 @@ Information is outputted to either the terminal (stdout), a CSV file, or a JSON 
 - A supported client operating system (Windows, Linux, macOS)
 - Python 3.3 or later
 
-TODO: Additional module dependencies
+#### Additional dependencies
+- [distro 1.9.0](https://pypi.org/project/distro/)
+- [psutil 7.2.2](https://pypi.org/project/psutil/)
+
+All dependencies are included in the `requirements.txt` file in the project root.
 
 ### Installation
 TODO: installation instructions
