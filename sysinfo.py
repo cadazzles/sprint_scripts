@@ -9,6 +9,7 @@
 
 # Imports
 import sys
+import platform
 
 # Constants
 DEFAULT_OUTPUT_FILE = "sysinfo"
@@ -18,6 +19,8 @@ def main():
     """ Primary script entry point - handles parsed cmd arguments and passes them to information gathering functions before outputting """
     check_basic_compat()
     output_mode, output_file = parse_args()
+    hostname = get_hostname()
+    print(hostname)
 
 def check_basic_compat():
     """ Basic script compatibility check. If the host system is not one of the supported three, immediately quit with an error. """
@@ -53,7 +56,8 @@ def parse_args():
 
     return output_mode, output_file
 
-
+def get_hostname():
+    return platform.node()
 
 
 # Run main() if called directly from cmd, otherwise function as an importable library
