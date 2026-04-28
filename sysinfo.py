@@ -12,6 +12,7 @@ import sys
 import subprocess
 import platform
 import distro
+import psutil
 
 # Constants
 DEFAULT_OUTPUT_FILE = "sysinfo"
@@ -23,6 +24,8 @@ def main():
     output_mode, output_file = parse_args()
     hostname = get_hostname()
     os_info = get_os_info()
+    cpu_info = get_cpu_info()
+    mem_info = get_mem_info()
 
 def check_basic_compat():
     """ Basic script compatibility check. If the host system is not one of the supported three, immediately quit with an error. """
@@ -100,6 +103,8 @@ def get_cpu_info():
         elif CLIENT_PLATFORM == "darwin":
             cpu_info.append(subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"]).decode().strip())
         
+        # Get amount of physical cores, logical cores, and system-wide CPU usage (as a percentage over a .5 second interval)
+        cpu_info.extend([psutil.cpu_count(logical=False), psutil.cpu_count(), psutil.cpu_percent(interval=0.5)]) 
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain CPU information: {e}')
         print("Exiting...")
