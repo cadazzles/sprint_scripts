@@ -125,6 +125,20 @@ def get_mem_info():
         sys.exit(1)
     
     return mem_info
+
+def get_disk_info():
+    # Generate list for Disk information
+    # Format: [used_space, total_space, percent_used]
+    disk_info = []
+    try:
+        # Get used space, total available space, and percentage used
+        disk_info.extend([psutil.disk_usage().used, psutil.disk_usage().total, psutil.disk_usage().percent])
+    except Exception as e:
+        print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
+        print("Exiting...")
+        sys.exit(1)
+    
+    return disk_info
     
 
 # Run main() if called directly from cmd, otherwise function as an importable library
