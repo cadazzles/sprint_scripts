@@ -138,8 +138,10 @@ def get_disk_info():
     try:
         # Get used space, total available space, and percentage used
         if CLIENT_PLATFORM == "win32":
+            # Get C:\ drive used/free size
             disk_info.extend([psutil.disk_usage('C:').used, psutil.disk_usage('C:').total, psutil.disk_usage('C:').percent])
         else:
+            # Get root partition used/free size (BUG: this currently doesn't work properly on macOS with APFS)
             disk_info.extend([psutil.disk_usage('/').used, psutil.disk_usage('/').total, psutil.disk_usage('/').percent])
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
