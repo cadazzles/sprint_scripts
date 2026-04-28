@@ -63,6 +63,7 @@ def get_hostname():
 
 def get_os_info():
     # Generate list for OS/platform information
+    # Format: [os_name, os_version, <win only: windows_release>, kernel_version, os_arch]
     os_info = []
     try:
         # Gather OS information based on current platform (Windows/macOS/Linux)
