@@ -46,15 +46,12 @@ def parse_args():
         # Exit with error code 1 and print help message if no args are provided
         print("Usage: python3 sysinfo.py <screen | csv | json> <optional: output_file>")
         sys.exit(1)
-    
     # Validate that supplied output mode is a valid option
     if not output_mode in ["screen", "csv", "json"]:
         print("ERROR: Invalid output mode. Valid options: screen, csv, json")
         sys.exit(1)
-
     # If no output filename/path is provided, use the default name in current working dir
     output_file = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT_FILE
-
     # Make sure the output file ends with the appropriate extension based on the output mode, add it if not present
     if output_mode == "csv":
         if not output_file.endswith(".csv"):
@@ -68,7 +65,6 @@ def parse_args():
 def get_hostname_uptime():
     # Use best-guess for system hostname
     hostname = platform.node()
-
     # Get time of last system boot (seconds since UNIX epoch)
     boot_timestamp = psutil.boot_time()
     # Turn into timestamp, format into human-readable duration (no microseconds)
@@ -112,7 +108,6 @@ def get_cpu_info():
             cpu_info.append(subprocess.check_output("lscpu | grep 'Model name'", shell=True).decode().split(':')[1].strip())
         elif CLIENT_PLATFORM == "darwin":
             cpu_info.append(subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"]).decode().strip())
-        
         # Get amount of physical cores, logical cores, and system-wide CPU usage (as a percentage over a .5 second interval)
         cpu_info.extend([psutil.cpu_count(logical=False), psutil.cpu_count(), psutil.cpu_percent(interval=0.5)]) 
     except Exception as e:
@@ -133,7 +128,7 @@ def get_mem_info():
         print(f'ERROR: Critical error occurred while attempting to obtain Memory information: {e}')
         print("Exiting...")
         sys.exit(1)
-    
+        
     return mem_info
 
 def get_disk_info():
