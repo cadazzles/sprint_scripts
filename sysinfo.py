@@ -120,7 +120,7 @@ def get_mem_info():
         # Get available virtual memory, total virtual memory, and percentage utilization
         mem_info.extend([psutil.virtual_memory().available, psutil.virtual_memory().total, psutil.virtual_memory().percent])
     except Exception as e:
-        print(f'ERROR: Critical error occurred while attempting to obtain memory information: {e}')
+        print(f'ERROR: Critical error occurred while attempting to obtain Memory information: {e}')
         print("Exiting...")
         sys.exit(1)
     
