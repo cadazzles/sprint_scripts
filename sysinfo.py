@@ -64,22 +64,29 @@ def get_hostname():
 def get_os_info():
     # Generate list for OS/platform information
     os_info = []
-    if CLIENT_PLATFORM == "win32":
-        os_info.append(platform.system()) # Windows name, i.e. "Windows"
-        os_info.append(platform.release()) # Windows marketing version, i.e. "11"
-        os_info.append(platform.win32_edition()) # Windows feature edition, i.e. "Professional"
-        os_info.append(platform.version()) # Windows build version, i.e. "10.0.26200"
-        os_info.append(platform.machine()) # OS architecture, i.e. "AMD64"
-    if CLIENT_PLATFORM == "darwin":
-        os_info.append("macOS") # Use macOS for identifiability instead of Darwin
-        os_info.append(platform.mac_ver()[0]) # macOS version, i.e. "26.4.1" - Darwin kernel and macOS versions often don't match
-        os_info.append(platform.version()) # Darwin version, i.e. "25.4"
-        os_info.append(platform.machine()) # OS architecture, i.e. "arm64"
-    if CLIENT_PLATFORM == "linux":
-        os_info.append(distro.name(pretty=True)) # Distribution name, i.e. "Ubuntu Server"
-        os_info.append(distro.version(pretty=True, best=True)) # Distribution version, i.e. "24.04.1 Noble Numbat"
-        os_info.append(platform.version()) # Linux kernel version, i.e. "6.6.89-ubuntu-1-1"
-        os_info.append(platform.machine()) # OS architecture, i.e. "AMD64"
+    try:
+        # Gather OS information based on current platform (Windows/macOS/Linux)
+        if CLIENT_PLATFORM == "win32":
+            os_info.append(platform.system()) # Windows name, i.e. "Windows"
+            os_info.append(platform.release()) # Windows marketing version, i.e. "11"
+            os_info.append(platform.win32_edition()) # Windows feature edition, i.e. "Professional"
+            os_info.append(platform.version()) # Windows build version, i.e. "10.0.26200"
+            os_info.append(platform.machine()) # OS architecture, i.e. "AMD64"
+        if CLIENT_PLATFORM == "darwin":
+            os_info.append("macOS") # Use macOS for identifiability instead of Darwin
+            os_info.append(platform.mac_ver()[0]) # macOS version, i.e. "26.4.1" - Darwin kernel and macOS versions often don't match
+            os_info.append(platform.version()) # Darwin version, i.e. "25.4"
+            os_info.append(platform.machine()) # OS architecture, i.e. "arm64"
+        if CLIENT_PLATFORM == "linux":
+            os_info.append(distro.name(pretty=True)) # Distribution name, i.e. "Ubuntu Server"
+            os_info.append(distro.version(pretty=True, best=True)) # Distribution version, i.e. "24.04.1 Noble Numbat"
+            os_info.append(platform.version()) # Linux kernel version, i.e. "6.6.89-ubuntu-1-1"
+            os_info.append(platform.machine()) # OS architecture, i.e. "AMD64"
+    except Exception as e:
+        # Exit w/ error if we run into any snags (most of the time, this process should succeed)
+        print(f'ERROR: Critical error occurred while attempting to gather OS information: {e}')
+        print("Exiting...")
+        sys.exit(1)
     return os_info
 
 
