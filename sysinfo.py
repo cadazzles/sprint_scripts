@@ -69,21 +69,17 @@ def get_os_info():
     try:
         # Gather OS information based on current platform (Windows/macOS/Linux)
         if CLIENT_PLATFORM == "win32":
-            os_info.append(platform.system()) # Windows name, i.e. "Windows"
-            os_info.append(platform.release()) # Windows marketing version, i.e. "11"
-            os_info.append(platform.win32_edition()) # Windows feature edition, i.e. "Professional"
-            os_info.append(platform.version()) # Windows build version, i.e. "10.0.26200"
-            os_info.append(platform.machine()) # OS architecture, i.e. "AMD64"
+            # Retrieves the following information for Windows-based systems
+            # Windows name (i.e. Windows), marketing version (i.e "11"), feature edition (i.e. Professional), build version (i.e. 26200), and OS architecture (i.e. AMD64)
+            os_info.extend([platform.system(), platform.release(), platform.win32_edition(), platform.version(), platform.machine()])
         if CLIENT_PLATFORM == "darwin":
-            os_info.append("macOS") # Use macOS for identifiability instead of Darwin
-            os_info.append(platform.mac_ver()[0]) # macOS version, i.e. "26.4.1" - Darwin kernel and macOS versions often don't match
-            os_info.append(platform.version()) # Darwin version, i.e. "25.4"
-            os_info.append(platform.machine()) # OS architecture, i.e. "arm64"
+            # Retrieves the following information for macOS-based systems
+            # macOS, macOS version (i.e. "26.4.1"), Darwin version (i.e. "25.4"), OS architecture (i.e. arm64)
+            os_info.extend(["macOS", platform.mac_ver()[0], platform.version(), platform.machine()])
         if CLIENT_PLATFORM == "linux":
-            os_info.append(distro.name(pretty=True)) # Distribution name, i.e. "Ubuntu Server"
-            os_info.append(distro.version(pretty=True, best=True)) # Distribution version, i.e. "24.04.1 Noble Numbat"
-            os_info.append(platform.version()) # Linux kernel version, i.e. "6.6.89-ubuntu-1-1"
-            os_info.append(platform.machine()) # OS architecture, i.e. "AMD64"
+            # Retrieves the following information for Linux-based systems
+            # Distribution name (i.e. Ubuntu Server), Distribution version (i.e. 24.04.1 Noble Numbat), Linux kernel version (i.e. 6.6.89-ubuntu-1-1), OS architecture (i.e. AMD64)
+            os_info.extend([distro.name(pretty=True), distro.version(pretty=True, best=True), platform.version(), platform.machine()])
     except Exception as e:
         # Exit w/ error if we run into any snags (most of the time, this process should succeed)
         print(f'ERROR: Critical error occurred while attempting to gather OS information: {e}')
@@ -93,7 +89,7 @@ def get_os_info():
 
 def get_cpu_info():
     # Generate list for CPU information
-
+    # Format: [pretty_model, physical_cores, logical_cores, usage_percent]
     cpu_info = []
     try:
         # Get CPU model name (i.e. AMD Ryzen 7 5800X3D 8-Core Processor, Apple M2, etc.)
@@ -103,13 +99,27 @@ def get_cpu_info():
             cpu_info.append(subprocess.check_output("lscpu | grep 'Model name'", shell=True).decode().split(':')[1].strip())
         elif CLIENT_PLATFORM == "darwin":
             cpu_info.append(subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"]).decode().strip())
-
         
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain CPU information: {e}')
         print("Exiting...")
         sys.exit(1)
     
+    return cpu_info
+
+def get_mem_info():
+    # Generate list for Memory information
+    # Format: [avail_vmem, total_vmem, percent_util]
+    mem_info = []
+    try:
+        # Get available virtual memory, total virtual memory, and percentage utilization
+        mem_info.extend([psutil.virtual_memory().available, psutil.virtual_memory().total, psutil.virtual_memory().percent])
+    except Exception as e:
+        print(f'ERROR: Critical error occurred while attempting to obtain memory information: {e}')
+        print("Exiting...")
+        sys.exit(1)
+    
+    return mem_info
     
 
 # Run main() if called directly from cmd, otherwise function as an importable library
