@@ -46,7 +46,7 @@ python3 sysinfo.py <screen | csv | json> <output_file>
 TODO: animated GIF with usage example
 
 ### Known Issues
-- Disk usage statistics are not calculated properly on Macs formatted with APFS (i.e. all modern Macs). This is a limitation of psutil.
+- Disk usage statistics may not appear properly on a Mac formatted with HFS+/Mac OS Extended (Journaled). (i.e. macOS versions prior to High Sierra.) I don't have any pre-High Sierra Macs so I cannot properly test for this.
 
 **NOTE:** This script was developed and tested using the following operating systems:
 - Windows 11 (25H2)

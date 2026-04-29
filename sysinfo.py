@@ -29,6 +29,9 @@ def main():
     cpu_info = get_cpu_info()
     mem_info = get_mem_info()
     disk_info = get_disk_info()
+    print(os_info)
+    print(cpu_info)
+    print(mem_info)
     print(disk_info)
 
 def check_basic_compat():
@@ -140,9 +143,12 @@ def get_disk_info():
         if CLIENT_PLATFORM == "win32":
             # Get C:\ drive used/free size
             disk_info.extend([psutil.disk_usage('C:').used, psutil.disk_usage('C:').total, psutil.disk_usage('C:').percent])
-        else:
-            # Get root partition used/free size (BUG: this currently doesn't work properly on macOS with APFS)
+        elif CLIENT_PLATFORM == "linux":
+            # Get root partition used/free size
             disk_info.extend([psutil.disk_usage('/').used, psutil.disk_usage('/').total, psutil.disk_usage('/').percent])
+        elif CLIENT_PLATFORM == "darwin":
+            # Get primary user-accessible space (APFS) used/free size
+            disk_info.extend([psutil.disk_usage('/System/Volumes/Data').used, psutil.disk_usage('/System/Volumes/Data').total, psutil.disk_usage('/System/Volumes/Data').percent])
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
         print("Exiting...")
