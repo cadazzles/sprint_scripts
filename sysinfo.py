@@ -37,7 +37,7 @@ def main():
 def check_basic_compat():
     """ Basic script compatibility check. If the host system is not one of the supported three, immediately quit with an error. """
     if not CLIENT_PLATFORM in ["win32", "darwin", "linux"]:
-        print(f'ERROR: platform {CLIENT_PLATFORM} is not supported by sysinfo. Please run this script from a Windows, macOS, or Linux system.')
+        print(f'ERROR: platform {CLIENT_PLATFORM} is not supported by sysinfo. Please run this script from a supported Windows, macOS, or Linux system.')
         sys.exit(1)
 
 def parse_args():
@@ -159,8 +159,7 @@ def get_disk_info():
         print("Exiting...")
         sys.exit(1)
     
-    return disk_info
-    
+    return disk_info 
 
 # Run main() if called directly from cmd, otherwise function as an importable library
 if __name__ == '__main__':
