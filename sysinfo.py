@@ -66,6 +66,7 @@ def parse_args():
     return output_mode, output_file
 
 def get_hostname_uptime():
+    """ Retrieves hostname and uptime of the client machine in a platform-agnostic way. """
     # Use best-guess for system hostname
     hostname = platform.node()
     # Get time of last system boot (seconds since UNIX epoch)
@@ -75,6 +76,7 @@ def get_hostname_uptime():
     return hostname, uptime_duration
 
 def get_os_info():
+    """ Retrieves a selection of pertintent OS information, including platform-specific values (i.e. kernel vs. product versions)"""
     # Generate list for OS/platform information
     # Format: [os_name, os_version, <win only: windows_release>, kernel_version, os_arch]
     os_info = []
@@ -100,6 +102,7 @@ def get_os_info():
     return os_info
 
 def get_cpu_info():
+    """ Retrieves a basic list of CPU information, including SKU name, cores/threads, and usage metrics. """
     # Generate list for CPU information
     # Format: [pretty_model, physical_cores, logical_cores, usage_percent]
     cpu_info = []
@@ -121,6 +124,7 @@ def get_cpu_info():
     return cpu_info
 
 def get_mem_info():
+    """ Retrieves information on memory usage statistics. """
     # Generate list for Memory information
     # Format: [avail_vmem, total_vmem, percent_util]
     mem_info = []
@@ -135,6 +139,7 @@ def get_mem_info():
     return mem_info
 
 def get_disk_info():
+    """ Retrieves information on disk usage statistics, with proper handling of APFS disk overprovisioning. """
     # Generate list for Disk information
     # Format: [used_space, total_space, percent_used]
     disk_info = []
