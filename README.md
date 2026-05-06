@@ -4,16 +4,36 @@ Quick and dirty system information grabber written in Python featuring multiple-
 Created for SEC444: Security Automation as part of the second sprint (sprint2).
 
 ## Description
-sysinfo.py gathers a selection of crucial information about a Windows/macOS/Linux system, including 
+sysinfo.py gathers a selection of crucial information about a Windows/macOS/Linux system, including:
 
 - Hostname
-- OS info (kernel version & product version)
-- CPU (CPU model and utilization snapshot)
-- memory usage
-- disk usage
-- IP address
-- MAC address
-- uptime
+- System uptime
+- Operating system info:
+    - OS type (Windows, macOS, Linux)
+    - Windows edition (Core, Professional, etc.)
+    - Linux distribution name
+    - OS release version (i.e. Windows 11, macOS 26.4)
+    - OS kernel version
+- CPU info:
+    - Pretty-printed model name (i.e. AMD Ryzen 7 5800X3D 8-Core Processor, Apple M2)
+    - Physical CPU cores
+    - Logical CPU cores (threads)
+    - CPU utilization percentage snapshot
+- Virtual memory info:
+    - Amount utilized (MiB)
+    - Total amount (MiB)
+    - Percent utilized (MiB)
+    - Amount free (MiB)
+- Disk info:
+    - Current root directory
+    - Amount utilized on root device (MiB)
+    - Total amount on root device (MiB)
+    - Percent utilized on root device (MiB)
+    - Amount free on root device (MiB)
+- Network interface info (per interface):
+    - IPv4 address
+    - IPv6 address
+    - MAC address
 
 Information is outputted to either the terminal (stdout), a CSV file, or a JSON file, based on a command-line argument taken when invoked. Works as a module or as a standalone utility.
 
