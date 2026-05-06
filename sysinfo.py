@@ -79,13 +79,14 @@ def parse_args():
 
 def get_hostname_uptime(sysinfo_dict):
     """ Retrieves hostname and uptime of the client machine in a platform-agnostic way. """
-    # Use best-guess for system hostname
-    sysinfo_dict['hostname'] = platform.node()
     # Get time of last system boot (seconds since UNIX epoch)
     boot_timestamp = psutil.boot_time()
     # Turn into timestamp, format into human-readable duration (no microseconds)
     uptime_duration = str(timedelta(seconds=time.time() - boot_timestamp)).split('.')[0]
-    sysinfo_dict['uptime_duration'] = uptime_duration
+    sysinfo_dict.update({
+        'hostname': platform.node(), # Use best guess for system hostname
+        'uptime_duration': uptime_duration
+    })
 
 def get_os_info(sysinfo_dict):
     """ Retrieves a selection of pertintent OS information, including platform-specific values (i.e. kernel vs. product versions)"""
