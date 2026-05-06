@@ -198,10 +198,21 @@ def export_to_json(sysinfo_dict, output_file):
 
 def export_to_csv(sysinfo_dict, output_file):
     """ Exports all retrieved system information to a CSV file for ease-of-access. """
+    flattened_sysinfo = flatten_sysinfo_dict(sysinfo_dict)
     with open(output_file, "w", newline="") as csv_outfile:
         out = csv.writer(csv_outfile)
-        out.writerows(sysinfo_dict.items())
-
+        out.writerows(flattened_sysinfo.items())
+    
+def flatten_sysinfo_dict(sysinfo_dict, parent_key='', sep='_'):
+    """ Flattens dictionary holding system information to facilitate transfer to human-readable CSV. """
+    flattened_dict = []
+    for k,v in sysinfo_dict.items():
+        flat_key = f'{parent_key}{sep}{k}' if parent_key else k
+        if isinstance(v, dict):
+            flattened_dict.extend(flatten_sysinfo_dict(v, flat_key, sep=sep).items())
+        else:
+            flattened_dict.append((flat_key, v))
+    return dict(flattened_dict)
 
 # Run main() if called directly from cmd, otherwise function as an importable library
 if __name__ == '__main__':
