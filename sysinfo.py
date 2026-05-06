@@ -24,7 +24,7 @@ DEFAULT_OUTPUT_FILE = "sysinfo"
 CLIENT_PLATFORM = sys.platform
 # Define platform-specific constants
 if CLIENT_PLATFORM == "win32":
-    ROOT_DIR = "C:"
+    ROOT_DIR = "C:\\"
     GET_CPU_MODEL_CMD = "wmic cpu get name"
 elif CLIENT_PLATFORM == "linux":
     ROOT_DIR = "/"
@@ -51,7 +51,7 @@ def main():
     get_net_info(sysinfo_dict)
 
     if output_mode == "screen":
-        print("stubbed")
+        export_to_screen(sysinfo_dict)
     elif output_mode == "json":
         export_to_json(sysinfo_dict, output_file)
     elif output_mode == "csv":
@@ -185,6 +185,7 @@ def get_disk_info(sysinfo_dict):
         # Get used space, available space, total space, and percentage used
         # All byte-based values are multiplied by 1.049e+6 to convert from bytes to MiB.
         sysinfo_dict.update({
+            'root_dir': ROOT_DIR,
             'disk_used_MiB': round(psutil.disk_usage(ROOT_DIR).used / 1.049e+6),
             'disk_available_MiB': round((psutil.disk_usage(ROOT_DIR).total - psutil.disk_usage(ROOT_DIR).used) / 1.049e+6),
             'disk_total_MiB': round(psutil.disk_usage(ROOT_DIR).total / 1.049e+6),
@@ -237,6 +238,25 @@ def flatten_sysinfo_dict(sysinfo_dict, parent_key='', sep='_'):
             flat_list.append((flat_key, v))
     # Convert our flattened list to a dictionary
     return dict(flat_list)
+
+def export_to_screen(sysinfo_dict):
+    """ Exports all retrieved system information to the terminal in a human-readable format. """
+    print("Gathered the following information about your system:")
+    print("=====================================================")
+    print(f'Date: {sysinfo_dict['date']}\n')
+    print(f'Hostname: {sysinfo_dict['hostname']}')
+    print(f'Uptime Duration: {sysinfo_dict['uptime_duration']}')
+    print("\n===[Operating System]===================")
+    print(f'OS: {sysinfo_dict['os_type']} {sysinfo_dict['os_version']} {sysinfo_dict['os_edition']} ({sysinfo_dict['os_arch']})')
+    print(f'Kernel Version: {sysinfo_dict['os_kernel_version']}')
+    print("\n===[CPU Information]====================")
+    print(f'CPU: {sysinfo_dict['cpu_model']} ({sysinfo_dict['cpu_physical_cores']} cores, {sysinfo_dict['cpu_logical_cores']} threads)')
+    print(f'CPU Usage: {sysinfo_dict['cpu_usage_percent']}%')
+    print("\n===[Virtual Memory Information]=========")
+    print(f'Virtual Memory: {sysinfo_dict['virtual_memory_used_MiB']} MiB / {sysinfo_dict['virtual_memory_total_MiB']} MiB ({sysinfo_dict['virtual_memory_util_percent']}% used, {sysinfo_dict['virtual_memory_available_MiB']} MiB free)')
+    print("\n===[Disk Usage Information]=============")
+    print(f'Root Directory: {sysinfo_dict['root_dir']}')
+    print(f'Disk Usage: {sysinfo_dict['disk_used_MiB']} MiB / {sysinfo_dict['disk_total_MiB']} MiB ({sysinfo_dict['disk_usage_percent']}% used, {sysinfo_dict['disk_available_MiB']} MiB free)')
 
 def export_to_json(sysinfo_dict, output_file):
     """ Exports all retrieved system information to a JSON file for ease-of-access. """
