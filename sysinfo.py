@@ -127,7 +127,7 @@ def get_os_info(sysinfo_dict):
             # Retrieves the following information for Linux-based systems
             # Distribution name (i.e. Ubuntu Server), Distribution version (i.e. 24.04.1 Noble Numbat), Linux kernel version (i.e. 6.6.89-ubuntu-1-1), OS architecture (i.e. AMD64)
             sysinfo_dict.update({
-                'os_type': distro.name(pretty=True),
+                'os_type': distro.name(),
                 'os_version': distro.version(pretty=True, best=True),
                 'os_edition': '',
                 'os_kernel_version': platform.release(),
