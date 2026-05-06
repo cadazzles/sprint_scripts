@@ -14,9 +14,9 @@ import platform
 import distro
 import psutil
 import time
-from datetime import timedelta
 import json
 import csv
+from datetime import datetime, timedelta
 
 # Constants
 DEFAULT_OUTPUT_FILE = "sysinfo"
@@ -39,7 +39,8 @@ def main():
     output_mode, output_file = parse_args()
     
     # Create a dictionary for storing all retrieved system information
-    sysinfo_dict = {}
+    # Always make sure to get the current date
+    sysinfo_dict = { 'date': str(datetime.now()) }
 
     get_hostname_uptime(sysinfo_dict)
     get_os_info(sysinfo_dict)
