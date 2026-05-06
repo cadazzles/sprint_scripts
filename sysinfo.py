@@ -14,27 +14,39 @@ import platform
 import distro
 import psutil
 import time
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 # Constants
 DEFAULT_OUTPUT_FILE = "sysinfo"
 CLIENT_PLATFORM = sys.platform
+# Define platform-specific constants
+if CLIENT_PLATFORM == "win32":
+    ROOT_DIR = "C:"
+    GET_CPU_MODEL_CMD = "wmic cpu get name"
+elif CLIENT_PLATFORM == "linux":
+    ROOT_DIR = "/"
+    GET_CPU_MODEL_CMD = "lscpu | grep 'Model name'"
+elif CLIENT_PLATFORM == "darwin":
+    ROOT_DIR = "/System/Volumes/Data"
+    GET_CPU_MODEL_CMD = ["sysctl", "-n", "machdep.cpu.brand_string"]
+
 
 def main():
     """ Primary script entry point - handles parsed cmd arguments and passes them to information gathering functions before outputting """
-    check_basic_compat()
+    check_script_compat()
     output_mode, output_file = parse_args()
-    hostname, uptime = get_hostname_uptime()
-    os_info = get_os_info()
-    cpu_info = get_cpu_info()
-    mem_info = get_mem_info()
-    disk_info = get_disk_info()
-    print(os_info)
-    print(cpu_info)
-    print(mem_info)
-    print(disk_info)
+    
+    # Create a dictionary for storing all retrieved system information
+    sysinfo_dict = {}
 
-def check_basic_compat():
+    get_hostname_uptime(sysinfo_dict)
+    get_os_info(sysinfo_dict)
+    get_cpu_info(sysinfo_dict)
+    get_mem_info(sysinfo_dict)
+    get_disk_info(sysinfo_dict)
+    print(sysinfo_dict)
+
+def check_script_compat():
     """ Basic script compatibility check. If the host system is not one of the supported three, immediately quit with an error. """
     if not CLIENT_PLATFORM in ["win32", "darwin", "linux"]:
         print(f'ERROR: platform {CLIENT_PLATFORM} is not supported by sysinfo. Please run this script from a supported Windows, macOS, or Linux system.')
@@ -65,101 +77,108 @@ def parse_args():
 
     return output_mode, output_file
 
-def get_hostname_uptime():
+def get_hostname_uptime(sysinfo_dict):
     """ Retrieves hostname and uptime of the client machine in a platform-agnostic way. """
     # Use best-guess for system hostname
-    hostname = platform.node()
+    sysinfo_dict['hostname'] = platform.node()
     # Get time of last system boot (seconds since UNIX epoch)
     boot_timestamp = psutil.boot_time()
     # Turn into timestamp, format into human-readable duration (no microseconds)
     uptime_duration = str(timedelta(seconds=time.time() - boot_timestamp)).split('.')[0]
-    return hostname, uptime_duration
+    sysinfo_dict['uptime_duration'] = uptime_duration
 
-def get_os_info():
+def get_os_info(sysinfo_dict):
     """ Retrieves a selection of pertintent OS information, including platform-specific values (i.e. kernel vs. product versions)"""
-    # Generate list for OS/platform information
-    # Format: [os_name, os_version, <win only: windows_release>, kernel_version, os_arch]
-    os_info = []
     try:
         # Gather OS information based on current platform (Windows/macOS/Linux)
         if CLIENT_PLATFORM == "win32":
             # Retrieves the following information for Windows-based systems
             # Windows name (i.e. Windows), marketing version (i.e "11"), feature edition (i.e. Professional), build version (i.e. 26200), and OS architecture (i.e. AMD64)
-            os_info.extend([platform.system(), platform.release(), platform.win32_edition(), platform.version(), platform.machine()])
+            sysinfo_dict.update({
+                'os_type': platform.system(),
+                'os_version': platform.release(),
+                'os_edition': platform.win32_edition(),
+                'os_kernel_version': platform.version(),
+                'os_arch': platform.machine()
+            })
         elif CLIENT_PLATFORM == "darwin":
             # Retrieves the following information for macOS-based systems
             # macOS, macOS version (i.e. "26.4.1"), Darwin version (i.e. "25.4"), OS architecture (i.e. arm64)
-            os_info.extend(["macOS", platform.mac_ver()[0], platform.release(), platform.machine()])
+            sysinfo_dict.update({
+                'os_type': 'macOS',
+                'os_version': platform.mac_ver()[0],
+                'os_edition': '',
+                'os_kernel_version': platform.release(),
+                'os_arch': platform.machine()
+            })
         elif CLIENT_PLATFORM == "linux":
             # Retrieves the following information for Linux-based systems
             # Distribution name (i.e. Ubuntu Server), Distribution version (i.e. 24.04.1 Noble Numbat), Linux kernel version (i.e. 6.6.89-ubuntu-1-1), OS architecture (i.e. AMD64)
-            os_info.extend([distro.name(pretty=True), distro.version(pretty=True, best=True), platform.release(), platform.machine()])
+            sysinfo_dict.update({
+                'os_type': distro.name(pretty=True),
+                'os_version': distro.version(pretty=True, best=True),
+                'os_edition': '',
+                'os_kernel_version': platform.release(),
+                'os_arch': platform.machine()
+            })
     except Exception as e:
         # Exit w/ error if we run into any snags (most of the time, this process should succeed)
         print(f'ERROR: Critical error occurred while attempting to gather OS information: {e}')
         print("Exiting...")
         sys.exit(1)
-    return os_info
 
-def get_cpu_info():
+def get_cpu_info(sysinfo_dict):
     """ Retrieves a basic list of CPU information, including SKU name, cores/threads, and usage metrics. """
     # Generate list for CPU information
     # Format: [pretty_model, physical_cores, logical_cores, usage_percent]
-    cpu_info = []
     try:
         # Get CPU model name (i.e. AMD Ryzen 7 5800X3D 8-Core Processor, Apple M2, etc.)
         if CLIENT_PLATFORM == "win32":
-            cpu_info.append(subprocess.check_output("wmic cpu get name", shell=True).decode().strip().split('\n')[1].strip())
+            sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD, shell=True).decode().strip().split('\n')[1].strip()
         elif CLIENT_PLATFORM == "linux":
-            cpu_info.append(subprocess.check_output("lscpu | grep 'Model name'", shell=True).decode().split(':')[1].strip())
+            sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD, shell=True).decode().split(':')[1].strip()
         elif CLIENT_PLATFORM == "darwin":
-            cpu_info.append(subprocess.check_output(["sysctl", "-n", "machdep.cpu.brand_string"]).decode().strip())
+            sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD).decode().strip()
         # Get amount of physical cores, logical cores, and system-wide CPU usage (as a percentage over a .5 second interval)
-        cpu_info.extend([psutil.cpu_count(logical=False), psutil.cpu_count(), psutil.cpu_percent(interval=0.5)]) 
+        sysinfo_dict.update({
+            'cpu_physical_cores': psutil.cpu_count(logical=False),
+            'cpu_logical_cores': psutil.cpu_count(),
+            'cpu_usage_percent': psutil.cpu_percent(interval=0.5),
+        })
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain CPU information: {e}')
         print("Exiting...")
         sys.exit(1)
-    
-    return cpu_info
 
-def get_mem_info():
+def get_mem_info(sysinfo_dict):
     """ Retrieves information on memory usage statistics. """
-    # Generate list for Memory information
-    # Format: [avail_vmem, total_vmem, percent_util]
-    mem_info = []
     try:
         # Get available virtual memory, total virtual memory, and percentage utilization
-        mem_info.extend([psutil.virtual_memory().available, psutil.virtual_memory().total, psutil.virtual_memory().percent])
+        sysinfo_dict.update({
+            'virtual_memory_used_bytes': psutil.virtual_memory().total - psutil.virtual_memory().available,
+            'virtual_memory_available_bytes': psutil.virtual_memory().available,
+            'virtual_memory_total_bytes': psutil.virtual_memory().total,
+            'virtual_memory_util_percent': psutil.virtual_memory().percent
+        })
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Memory information: {e}')
         print("Exiting...")
         sys.exit(1)
-        
-    return mem_info
 
-def get_disk_info():
+def get_disk_info(sysinfo_dict):
     """ Retrieves information on disk usage statistics, with proper handling of APFS disk overprovisioning. """
-    # Generate list for Disk information
-    # Format: [used_space, total_space, percent_used]
-    disk_info = []
     try:
         # Get used space, total available space, and percentage used
-        if CLIENT_PLATFORM == "win32":
-            # Get C:\ drive used/free size
-            disk_info.extend([psutil.disk_usage('C:').used, psutil.disk_usage('C:').total, psutil.disk_usage('C:').percent])
-        elif CLIENT_PLATFORM == "linux":
-            # Get root partition used/free size
-            disk_info.extend([psutil.disk_usage('/').used, psutil.disk_usage('/').total, psutil.disk_usage('/').percent])
-        elif CLIENT_PLATFORM == "darwin":
-            # Get primary user-accessible space (APFS) used/free size
-            disk_info.extend([psutil.disk_usage('/System/Volumes/Data').used, psutil.disk_usage('/System/Volumes/Data').total, psutil.disk_usage('/System/Volumes/Data').percent])
+        sysinfo_dict.update({
+            'disk_used_bytes': psutil.disk_usage(ROOT_DIR).used,
+            'disk_available_bytes': psutil.disk_usage(ROOT_DIR).total - psutil.disk_usage(ROOT_DIR).used,
+            'disk_total_bytes': psutil.disk_usage(ROOT_DIR).total,
+            'disk_usage_percent': psutil.disk_usage(ROOT_DIR).percent
+        })
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
         print("Exiting...")
         sys.exit(1)
-    
-    return disk_info 
 
 # Run main() if called directly from cmd, otherwise function as an importable library
 if __name__ == '__main__':
