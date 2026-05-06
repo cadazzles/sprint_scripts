@@ -19,7 +19,7 @@ Information is outputted to either the terminal (stdout), a CSV file, or a JSON 
 
 ## Getting Started
 ### Dependencies
-- A supported client operating system (Windows, Linux, macOS)
+- A supported client operating system (Windows, Linux, macOS 11 "Big Sur" or later)
 - Python 3.3 or later
 
 #### Additional dependencies

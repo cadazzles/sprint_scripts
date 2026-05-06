@@ -60,6 +60,9 @@ def main():
 def check_script_compat():
     """ Basic script compatibility check. If the host system is not one of the supported three, immediately quit with an error. """
     if not CLIENT_PLATFORM in ["win32", "darwin", "linux"]:
+        if CLIENT_PLATFORM == "darwin" & int(platform.mac_ver()[0].split('.')[0]) < 11:
+            print('ERROR: macOS version is not supported. Required: macOS 11.0 or later. Please run this script from a newer version of macOS.')
+            sys.exit(1)
         print(f'ERROR: platform {CLIENT_PLATFORM} is not supported by sysinfo. Please run this script from a supported Windows, macOS, or Linux system.')
         sys.exit(1)
 
@@ -115,11 +118,22 @@ def get_os_info(sysinfo_dict):
             })
         elif CLIENT_PLATFORM == "darwin":
             # Retrieves the following information for macOS-based systems
-            # macOS, macOS version (i.e. "26.4.1"), Darwin version (i.e. "25.4"), OS architecture (i.e. arm64)
+            # macOS, macOS version (i.e. "26.4.1"), macOS version codename (i.e. "Tahoe"), Darwin version (i.e. "25.4"), OS architecture (i.e. arm64)
+            # Get base macOS version (prior to quality updates/security updates)
+            current_macOS_edition = platform.mac_ver()[0].split('.')[0]
+            # Dict of supported major macOS versions
+            macOS_editions = {
+                '26': 'Tahoe',
+                '15': 'Sequoia',
+                '14': 'Sonoma',
+                '13': 'Ventura',
+                '12': 'Monterey',
+                '11': 'Big Sur',
+            }
             sysinfo_dict.update({
                 'os_type': 'macOS',
                 'os_version': platform.mac_ver()[0],
-                'os_edition': '',
+                'os_edition': macOS_editions[current_macOS_edition] if macOS_editions.get(current_macOS_edition) else '',
                 'os_kernel_version': platform.release(),
                 'os_arch': platform.machine()
             })
