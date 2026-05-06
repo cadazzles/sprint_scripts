@@ -156,9 +156,9 @@ def get_mem_info(sysinfo_dict):
     try:
         # Get available virtual memory, total virtual memory, and percentage utilization
         sysinfo_dict.update({
-            'virtual_memory_used_bytes': psutil.virtual_memory().total - psutil.virtual_memory().available,
-            'virtual_memory_available_bytes': psutil.virtual_memory().available,
-            'virtual_memory_total_bytes': psutil.virtual_memory().total,
+            'virtual_memory_used_MiB': round((psutil.virtual_memory().total - psutil.virtual_memory().available) / 1.049e+6),
+            'virtual_memory_available_MiB': round(psutil.virtual_memory().available / 1.049e+6),
+            'virtual_memory_total_MiB': round(psutil.virtual_memory().total / 1.049e+6),
             'virtual_memory_util_percent': psutil.virtual_memory().percent
         })
     except Exception as e:
@@ -171,9 +171,9 @@ def get_disk_info(sysinfo_dict):
     try:
         # Get used space, total available space, and percentage used
         sysinfo_dict.update({
-            'disk_used_bytes': psutil.disk_usage(ROOT_DIR).used,
-            'disk_available_bytes': psutil.disk_usage(ROOT_DIR).total - psutil.disk_usage(ROOT_DIR).used,
-            'disk_total_bytes': psutil.disk_usage(ROOT_DIR).total,
+            'disk_used_MiB': round(psutil.disk_usage(ROOT_DIR).used / 1.049e+6),
+            'disk_available_MiB': round((psutil.disk_usage(ROOT_DIR).total - psutil.disk_usage(ROOT_DIR).used) / 1.049e+6),
+            'disk_total_MiB': round(psutil.disk_usage(ROOT_DIR).total / 1.049e+6),
             'disk_usage_percent': psutil.disk_usage(ROOT_DIR).percent
         })
     except Exception as e:
