@@ -13,6 +13,7 @@ import subprocess
 import platform
 import distro
 import psutil
+import socket
 import time
 import json
 import csv
@@ -47,6 +48,7 @@ def main():
     get_cpu_info(sysinfo_dict)
     get_mem_info(sysinfo_dict)
     get_disk_info(sysinfo_dict)
+    get_net_info(sysinfo_dict)
     print(sysinfo_dict)
 
     if output_mode == "screen":
@@ -188,6 +190,29 @@ def get_disk_info(sysinfo_dict):
         })
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
+        print("Exiting...")
+        sys.exit(1)
+
+def get_net_info(sysinfo_dict):
+    """ Retrieves information on network interfaces, including IPv4/IPv6 addresses and MAC addresses. """
+    sysinfo_dict['network_interfaces'] = {}
+    try:
+        network_interfaces = psutil.net_if_addrs()
+        for interface_name, addresses in network_interfaces.items():
+            current_interface = {}
+            for addr in addresses:
+                if addr.family == socket.AF_INET:
+                    current_interface['ipv4_address'] = addr.address
+                elif addr.family == socket.AF_INET6:
+                    current_interface['ipv6_address'] = addr.address
+                elif addr.family == psutil.AF_LINK:
+                    current_interface['mac_address'] = addr.address
+            sysinfo_dict['network_interfaces'].update({
+                interface_name: current_interface
+            })
+
+    except Exception as e:
+        print(f'ERROR: Critical error occurred while attempting to obtain Network Interface information: {e}')
         print("Exiting...")
         sys.exit(1)
     
