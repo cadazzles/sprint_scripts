@@ -15,6 +15,8 @@ import distro
 import psutil
 import time
 from datetime import timedelta
+import json
+import csv
 
 # Constants
 DEFAULT_OUTPUT_FILE = "sysinfo"
@@ -45,6 +47,13 @@ def main():
     get_mem_info(sysinfo_dict)
     get_disk_info(sysinfo_dict)
     print(sysinfo_dict)
+
+    if output_mode == "screen":
+        print("stubbed")
+    elif output_mode == "json":
+        export_to_json(sysinfo_dict, output_file)
+    elif output_mode == "csv":
+        export_to_csv(sysinfo_dict, output_file)
 
 def check_script_compat():
     """ Basic script compatibility check. If the host system is not one of the supported three, immediately quit with an error. """
@@ -180,6 +189,18 @@ def get_disk_info(sysinfo_dict):
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
         print("Exiting...")
         sys.exit(1)
+    
+def export_to_json(sysinfo_dict, output_file):
+    """ Exports all retrieved system information to a JSON file for ease-of-access. """
+    with open(output_file, "w") as json_outfile:
+        json.dump(sysinfo_dict, json_outfile, indent=4)
+
+def export_to_csv(sysinfo_dict, output_file):
+    """ Exports all retrieved system information to a CSV file for ease-of-access. """
+    with open(output_file, "w", newline="") as csv_outfile:
+        out = csv.writer(csv_outfile)
+        out.writerows(sysinfo_dict.items())
+
 
 # Run main() if called directly from cmd, otherwise function as an importable library
 if __name__ == '__main__':
