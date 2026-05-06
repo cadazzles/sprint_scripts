@@ -9,6 +9,7 @@
 
 # Imports
 import sys
+import os
 import subprocess
 import platform
 import distro
@@ -190,12 +191,13 @@ def get_mem_info(sysinfo_dict):
     })
 
 def get_disk_info(sysinfo_dict):
-    """ Retrieves information on disk usage statistics, with proper handling of APFS disk overprovisioning. """
+    """ Retrieves information on root disk filesystem and usage statistics, with proper handling of APFS disk overprovisioning. """
     try:
-        # Get used space, available space, total space, and percentage used
+        # Get file system, used space, available space, total space, and percentage used
         # All byte-based values are multiplied by 1.049e+6 to convert from bytes to MiB.
         sysinfo_dict.update({
             'root_dir': ROOT_DIR,
+            'root_fs': get_filesystem_type(ROOT_DIR),
             'disk_used_MiB': round(psutil.disk_usage(ROOT_DIR).used / 1.049e+6),
             'disk_available_MiB': round((psutil.disk_usage(ROOT_DIR).total - psutil.disk_usage(ROOT_DIR).used) / 1.049e+6),
             'disk_total_MiB': round(psutil.disk_usage(ROOT_DIR).total / 1.049e+6),
@@ -204,6 +206,22 @@ def get_disk_info(sysinfo_dict):
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
         print("Exiting...")
+        sys.exit(1)
+
+def get_filesystem_type(root_path):
+    """ Gets the current file system for the root directory/root disk. """
+    try:
+        path = os.path.abspath(root_path)
+        for partition in psutil.disk_partitions(all=True):
+            if path.startswith(partition.mountpoint):
+                return partition.fstype
+    except FileNotFoundError:
+        print('CRITICAL: Could not find the root directory!')
+        print('Exiting...')
+        sys.exit(1)
+    except Exception as e:
+        print(f'ERROR: Critical error occurred while attempting to identify filesystem type: {e}')
+        print('Exiting...')
         sys.exit(1)
 
 def get_net_info(sysinfo_dict):
@@ -265,7 +283,7 @@ def export_to_screen(sysinfo_dict):
     print("\n===[Virtual Memory Information]=========")
     print(f'Virtual Memory: {sysinfo_dict['virtual_memory_used_MiB']} MiB / {sysinfo_dict['virtual_memory_total_MiB']} MiB ({sysinfo_dict['virtual_memory_util_percent']}% used, {sysinfo_dict['virtual_memory_available_MiB']} MiB free)')
     print("\n===[Disk Usage Information]=============")
-    print(f'Root Directory: {sysinfo_dict['root_dir']}')
+    print(f'Root Directory: {sysinfo_dict['root_dir']} [{sysinfo_dict['root_fs']}]')
     print(f'Disk Usage: {sysinfo_dict['disk_used_MiB']} MiB / {sysinfo_dict['disk_total_MiB']} MiB ({sysinfo_dict['disk_usage_percent']}% used, {sysinfo_dict['disk_available_MiB']} MiB free)')
     print("\n===[Network Interfaces]=================")
     # Cycle through nested dict containing network interfaces
