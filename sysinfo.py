@@ -84,7 +84,7 @@ def get_hostname_uptime(sysinfo_dict):
     # Turn into timestamp, format into human-readable duration (no microseconds)
     uptime_duration = str(timedelta(seconds=time.time() - boot_timestamp)).split('.')[0]
     sysinfo_dict.update({
-        'hostname': platform.node(), # Use best guess for system hostname
+        'hostname': platform.node(), # Use platform's best guess for system hostname
         'uptime_duration': uptime_duration
     })
 
