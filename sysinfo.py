@@ -144,7 +144,7 @@ def get_cpu_info(sysinfo_dict):
         sysinfo_dict.update({
             'cpu_physical_cores': psutil.cpu_count(logical=False),
             'cpu_logical_cores': psutil.cpu_count(),
-            'cpu_usage_percent': psutil.cpu_percent(interval=0.5),
+            'cpu_usage_percent': psutil.cpu_percent(interval=1),
         })
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain CPU information: {e}')
