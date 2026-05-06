@@ -122,16 +122,16 @@ def get_os_info(sysinfo_dict):
         # Retrieves the following information for macOS-based systems
         # macOS, macOS version (i.e. "26.4.1"), macOS version codename (i.e. "Tahoe"), Darwin version (i.e. "25.4"), OS architecture (i.e. arm64)
             # Get base macOS version (prior to quality updates/security updates)
-            current_macOS_edition = platform.mac_ver()[0].split('.')[0]
-            # Dict of supported major macOS versions
-            macOS_editions = {
-                '26': 'Tahoe',
-                '15': 'Sequoia',
-                '14': 'Sonoma',
-                '13': 'Ventura',
-                '12': 'Monterey',
-                '11': 'Big Sur',
-            }
+        current_macOS_edition = platform.mac_ver()[0].split('.')[0]
+        # Dict of supported major macOS versions
+        macOS_editions = {
+            '26': 'Tahoe',
+            '15': 'Sequoia',
+            '14': 'Sonoma',
+            '13': 'Ventura',
+            '12': 'Monterey',
+            '11': 'Big Sur',
+        }
         sysinfo_dict.update({
             'os_type': 'macOS',
             'os_version': platform.mac_ver()[0],
