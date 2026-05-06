@@ -49,7 +49,6 @@ def main():
     get_mem_info(sysinfo_dict)
     get_disk_info(sysinfo_dict)
     get_net_info(sysinfo_dict)
-    print(sysinfo_dict)
 
     if output_mode == "screen":
         print("stubbed")
@@ -145,15 +144,16 @@ def get_cpu_info(sysinfo_dict):
     # Generate list for CPU information
     # Format: [pretty_model, physical_cores, logical_cores, usage_percent]
     try:
-        # Get CPU model name (i.e. AMD Ryzen 7 5800X3D 8-Core Processor, Apple M2, etc.)
+        # Get CPU model name (i.e. AMD Ryzen 7 5800X3D 8-Core Processor, Apple M2, etc.) using platform-specific commands
+        # Command output is stripped of extraneous information and whitespace to ensure only relevant sections are shown
         if CLIENT_PLATFORM == "win32":
             sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD, shell=True).decode().strip().split('\n')[1].strip()
         elif CLIENT_PLATFORM == "linux":
             sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD, shell=True).decode().split(':')[1].strip()
         elif CLIENT_PLATFORM == "darwin":
             sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD).decode().strip()
-        # Get amount of physical cores, logical cores, and system-wide CPU usage (as a percentage over a .5 second interval)
         sysinfo_dict.update({
+            # Get amount of physical cores, logical cores, and system-wide CPU usage (as a percentage over a .5 second interval)
             'cpu_physical_cores': psutil.cpu_count(logical=False),
             'cpu_logical_cores': psutil.cpu_count(),
             'cpu_usage_percent': psutil.cpu_percent(interval=1),
@@ -166,7 +166,8 @@ def get_cpu_info(sysinfo_dict):
 def get_mem_info(sysinfo_dict):
     """ Retrieves information on memory usage statistics. """
     try:
-        # Get available virtual memory, total virtual memory, and percentage utilization
+        # Get used virtual memory, available virtual memory, total virtual memory, and percentage utilization
+        # All byte-based values are multiplied by 1.049e+6 to convert from bytes to MiB.
         sysinfo_dict.update({
             'virtual_memory_used_MiB': round((psutil.virtual_memory().total - psutil.virtual_memory().available) / 1.049e+6),
             'virtual_memory_available_MiB': round(psutil.virtual_memory().available / 1.049e+6),
@@ -181,7 +182,8 @@ def get_mem_info(sysinfo_dict):
 def get_disk_info(sysinfo_dict):
     """ Retrieves information on disk usage statistics, with proper handling of APFS disk overprovisioning. """
     try:
-        # Get used space, total available space, and percentage used
+        # Get used space, available space, total space, and percentage used
+        # All byte-based values are multiplied by 1.049e+6 to convert from bytes to MiB.
         sysinfo_dict.update({
             'disk_used_MiB': round(psutil.disk_usage(ROOT_DIR).used / 1.049e+6),
             'disk_available_MiB': round((psutil.disk_usage(ROOT_DIR).total - psutil.disk_usage(ROOT_DIR).used) / 1.049e+6),
@@ -195,10 +197,14 @@ def get_disk_info(sysinfo_dict):
 
 def get_net_info(sysinfo_dict):
     """ Retrieves information on network interfaces, including IPv4/IPv6 addresses and MAC addresses. """
+    # Create nested dictionary for information on network interfaces - this looks nicer in JSON
     sysinfo_dict['network_interfaces'] = {}
     try:
+        # Retrieve complete list of network interfaces from platform
         network_interfaces = psutil.net_if_addrs()
+        # For each interface in the list, retrieve name/ipv4/ipv6/MAC and add it to a dict unique to that interface
         for interface_name, addresses in network_interfaces.items():
+            # Create dictionary for current interface
             current_interface = {}
             for addr in addresses:
                 if addr.family == socket.AF_INET:
@@ -207,37 +213,57 @@ def get_net_info(sysinfo_dict):
                     current_interface['ipv6_address'] = addr.address
                 elif addr.family == psutil.AF_LINK:
                     current_interface['mac_address'] = addr.address
+            # Append nested dict with the dict for this specific interface
             sysinfo_dict['network_interfaces'].update({
                 interface_name: current_interface
             })
-
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Network Interface information: {e}')
         print("Exiting...")
         sys.exit(1)
-    
+
+def flatten_sysinfo_dict(sysinfo_dict, parent_key='', sep='_'):
+    """ Flattens dictionary holding system information to facilitate transfer to human-readable CSV. """
+    # Create a list to hold our complete flattened data structure
+    flat_list = []
+    for k,v in sysinfo_dict.items():
+        # For each original key/value pair, generate a new flattened key (i.e. new key is key1_key2)
+        flat_key = f'{parent_key}{sep}{k}' if parent_key else k
+        if isinstance(v, dict):
+            # if the current value is a dictionary itself, flatten that dictionary as well (key becomes key1_key2_key3, etc.)
+            flat_list.extend(flatten_sysinfo_dict(v, flat_key, sep=sep).items())
+        else:
+            # otherwise append value to our list corresponding to the current flattened key
+            flat_list.append((flat_key, v))
+    # Convert our flattened list to a dictionary
+    return dict(flat_list)
+
 def export_to_json(sysinfo_dict, output_file):
     """ Exports all retrieved system information to a JSON file for ease-of-access. """
-    with open(output_file, "w") as json_outfile:
-        json.dump(sysinfo_dict, json_outfile, indent=4)
+    try:
+        # Dictionaries are already broadly compatible with JSON, just pretty-print out the contents of our dict to a JSON file
+        with open(output_file, "w") as json_outfile:
+            json.dump(sysinfo_dict, json_outfile, indent=4)
+        print(f'Successfully outputted to JSON file \"{output_file}\".')
+    except Exception as e:
+        print(f'ERROR: Critical error occurred while attempting to output to JSON file: {e}')
+        print("Exiting...")
+        sys.exit(1)
 
 def export_to_csv(sysinfo_dict, output_file):
     """ Exports all retrieved system information to a CSV file for ease-of-access. """
-    flattened_sysinfo = flatten_sysinfo_dict(sysinfo_dict)
-    with open(output_file, "w", newline="") as csv_outfile:
-        out = csv.writer(csv_outfile)
-        out.writerows(flattened_sysinfo.items())
-    
-def flatten_sysinfo_dict(sysinfo_dict, parent_key='', sep='_'):
-    """ Flattens dictionary holding system information to facilitate transfer to human-readable CSV. """
-    flattened_dict = []
-    for k,v in sysinfo_dict.items():
-        flat_key = f'{parent_key}{sep}{k}' if parent_key else k
-        if isinstance(v, dict):
-            flattened_dict.extend(flatten_sysinfo_dict(v, flat_key, sep=sep).items())
-        else:
-            flattened_dict.append((flat_key, v))
-    return dict(flattened_dict)
+    try:
+        # Flatten sysinfo dictionary for readability (otherwise, network interfaces will get one really long value)
+        flattened_sysinfo = flatten_sysinfo_dict(sysinfo_dict)
+        # Export flattened sysinfo dict to CSV
+        with open(output_file, "w", newline="") as csv_outfile:
+            out = csv.writer(csv_outfile)
+            out.writerows(flattened_sysinfo.items())
+        print(f'Successfully outputted to CSV file \"{output_file}\".')
+    except Exception as e:
+        print(f'ERROR: Critical error occurred while attempting to output to CSV file: {e}')
+        print("Exiting...")
+        sys.exit(1)
 
 # Run main() if called directly from cmd, otherwise function as an importable library
 if __name__ == '__main__':
