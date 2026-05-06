@@ -1,5 +1,8 @@
 # Ignore virtual environments
-venv/
+.venv/
+
+# Ignore vscode config
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
