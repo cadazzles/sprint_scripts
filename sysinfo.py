@@ -40,18 +40,9 @@ def main():
     # Check for compatible OS then parse arguments
     check_script_compat()
     output_mode, output_file = parse_args()
-    
-    # Create a dictionary for storing all retrieved system information
-    # Always make sure to get the current date
-    sysinfo_dict = { 'date': str(datetime.now()) }
 
     # Call primary functions for obtaining system info
-    get_hostname_uptime(sysinfo_dict)
-    get_os_info(sysinfo_dict)
-    get_cpu_info(sysinfo_dict)
-    get_mem_info(sysinfo_dict)
-    get_disk_info(sysinfo_dict)
-    get_net_info(sysinfo_dict)
+    sysinfo_dict = collect_all()
 
     # Determine output mode based on argument
     if output_mode == "screen":
@@ -95,37 +86,38 @@ def parse_args():
 
     return output_mode, output_file
 
-def get_hostname_uptime(sysinfo_dict):
-    """ Retrieves hostname and uptime of the client machine in a platform-agnostic way. """
+def get_hostname_uptime():
+    """ Retrieves date, hostname and uptime of the client machine in a platform-agnostic way. """
     # Get time of last system boot (in seconds since UNIX epoch)
     boot_timestamp = psutil.boot_time()
     # Turn into timestamp + format into human-readable duration (w/o microseconds)
     uptime_duration = str(timedelta(seconds=time.time() - boot_timestamp)).split('.')[0]
-    sysinfo_dict.update({
+    return {
+        'date': str(datetime.now()),
         'hostname': platform.node(), # Use platform's best guess for system hostname
         'uptime_duration': uptime_duration
-    })
+    }
 
-def get_os_info(sysinfo_dict):
+def get_os_info():
     """ Retrieves a selection of pertintent OS information, including platform-specific values (i.e. kernel versions, editions, product versions)"""
     # Gather OS information based on current platform (Windows/macOS/Linux)
     if CLIENT_PLATFORM == "win32":
         # Retrieves the following information for Windows-based systems
         # Windows name (i.e. Windows), marketing version (i.e "11"), feature edition (i.e. Professional), build version (i.e. 26200), and OS architecture (i.e. AMD64)
-        sysinfo_dict.update({
+        return {
             'os_type': platform.system(),
             'os_version': platform.release(),
             'os_edition': platform.win32_edition(),
             'os_kernel_version': platform.version(),
             'os_arch': platform.machine()
-        })
+        }
     elif CLIENT_PLATFORM == "darwin":
         # Retrieves the following information for macOS-based systems
         # macOS, macOS version (i.e. "26.4.1"), macOS version codename (i.e. "Tahoe"), Darwin version (i.e. "25.4"), OS architecture (i.e. arm64)
             # Get base macOS version (prior to quality updates/security updates)
-        current_macOS_edition = platform.mac_ver()[0].split('.')[0]
+        current_codename = platform.mac_ver()[0].split('.')[0]
         # Dict of supported major macOS versions
-        macOS_editions = {
+        macOS_codenames = {
             '26': 'Tahoe',
             '15': 'Sequoia',
             '14': 'Sonoma',
@@ -133,42 +125,43 @@ def get_os_info(sysinfo_dict):
             '12': 'Monterey',
             '11': 'Big Sur',
         }
-        sysinfo_dict.update({
+        return {
             'os_type': 'macOS',
             'os_version': platform.mac_ver()[0],
-            'os_edition': macOS_editions[current_macOS_edition] if macOS_editions.get(current_macOS_edition) else '',
+            'os_edition': macOS_codenames[current_codename] if macOS_codenames.get(current_codename) else '',
             'os_kernel_version': platform.release(),
             'os_arch': platform.machine()
-        })
+        }
     elif CLIENT_PLATFORM == "linux":
         # Retrieves the following information for Linux-based systems
         # Distribution name (i.e. Ubuntu), Distribution version (i.e. 24.04.1 (noble)), Linux kernel version (i.e. 6.6.89-ubuntu-1-1), OS architecture (i.e. AMD64)
-        sysinfo_dict.update({
+        return {
             'os_type': distro.name(),
             'os_version': distro.version(pretty=True, best=True),
             'os_edition': '',
             'os_kernel_version': platform.release(),
             'os_arch': platform.machine()
-        })
+        }
 
-def get_cpu_info(sysinfo_dict):
+def get_cpu_info():
     """ Retrieves a basic list of CPU information, including SKU name, cores/threads, and usage metrics. """
     try:
         # Get CPU model name (i.e. AMD Ryzen 7 5800X3D 8-Core Processor, Apple M2, etc.) using platform-specific commands
         # Command output is stripped of extraneous information and whitespace to ensure only relevant sections are shown
         if CLIENT_PLATFORM == "win32":
-            sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD, shell=True).decode().strip().split('\n')[1].strip()
+            cpu_model = subprocess.check_output(GET_CPU_MODEL_CMD, shell=True).decode().strip().split('\n')[1].strip()
         elif CLIENT_PLATFORM == "linux":
-            sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD, shell=True).decode().split(':')[1].strip()
+            cpu_model = subprocess.check_output(GET_CPU_MODEL_CMD, shell=True).decode().split(':')[1].strip()
         elif CLIENT_PLATFORM == "darwin":
-            sysinfo_dict['cpu_model'] = subprocess.check_output(GET_CPU_MODEL_CMD).decode().strip()
-        sysinfo_dict.update({
+            cpu_model = subprocess.check_output(GET_CPU_MODEL_CMD).decode().strip()
+        return {
             # Get amount of physical cores, logical cores, and system-wide CPU usage (as a percentage recorded over a 1 second interval)
+            'cpu_model': cpu_model,
             'cpu_physical_cores': psutil.cpu_count(logical=False),
             'cpu_logical_cores': psutil.cpu_count(),
             'cpu_usage_percent': psutil.cpu_percent(interval=1),
             'cpu_freq': round(psutil.cpu_freq().current / 1000, 2)
-        })
+        }
     # Print a nice error message in the potential case command doesn't exist
     except FileNotFoundError:
         print(f'CRITICAL: Failed to obtain CPU model information, as the command \"{GET_CPU_MODEL_CMD}\" does not exist on your system.')
@@ -180,35 +173,38 @@ def get_cpu_info(sysinfo_dict):
         print('Exiting...')
         sys.exit(1)
 
-def get_mem_info(sysinfo_dict):
+def get_mem_info():
     """ Retrieves information on memory usage statistics. """
     # Get used virtual memory, available virtual memory, total virtual memory, and percentage utilization
     # Get used swap, available swap, total swap, and percentage utilization
     # All byte-based values are multiplied by 1.049e+6 to convert from bytes to MiB.
-    sysinfo_dict.update({
-        'virtual_memory_used_MiB': round((psutil.virtual_memory().total - psutil.virtual_memory().available) / 1.049e+6),
-        'virtual_memory_available_MiB': round(psutil.virtual_memory().available / 1.049e+6),
-        'virtual_memory_total_MiB': round(psutil.virtual_memory().total / 1.049e+6),
-        'virtual_memory_util_percent': psutil.virtual_memory().percent,
-        'swap_memory_used_MiB': round(psutil.swap_memory().used / 1.049e+6),
-        'swap_memory_available_MiB': round(psutil.swap_memory().free / 1.049e+6),
-        'swap_memory_total_MiB': round(psutil.swap_memory().total / 1.049e+6),
-        'swap_memory_util_percent': psutil.swap_memory().percent
-    })
+    mem = psutil.virtual_memory()
+    swap = psutil.swap_memory()
+    return {
+        'virtual_memory_used_MiB': round((mem.total - mem.available) / 1.049e+6),
+        'virtual_memory_available_MiB': round(mem.available / 1.049e+6),
+        'virtual_memory_total_MiB': round(mem.total / 1.049e+6),
+        'virtual_memory_util_percent': mem.percent,
+        'swap_memory_used_MiB': round(swap.used / 1.049e+6),
+        'swap_memory_available_MiB': round(swap.free / 1.049e+6),
+        'swap_memory_total_MiB': round(swap.total / 1.049e+6),
+        'swap_memory_util_percent': swap.percent
+    }
 
-def get_disk_info(sysinfo_dict):
+def get_disk_info():
     """ Retrieves information on root disk filesystem and usage statistics, with proper handling of APFS disk overprovisioning. """
     try:
         # Get file system, used space, available space, total space, and percentage used
         # All byte-based values are multiplied by 1.049e+6 to convert from bytes to MiB.
-        sysinfo_dict.update({
+        disk = psutil.disk_usage(ROOT_DIR)
+        return {
             'root_dir': ROOT_DIR,
             'root_fs': get_filesystem_type(ROOT_DIR),
-            'disk_used_MiB': round(psutil.disk_usage(ROOT_DIR).used / 1.049e+6),
-            'disk_available_MiB': round((psutil.disk_usage(ROOT_DIR).total - psutil.disk_usage(ROOT_DIR).used) / 1.049e+6),
-            'disk_total_MiB': round(psutil.disk_usage(ROOT_DIR).total / 1.049e+6),
-            'disk_usage_percent': psutil.disk_usage(ROOT_DIR).percent
-        })
+            'disk_used_MiB': round(disk.used / 1.049e+6),
+            'disk_available_MiB': round((disk.total - disk.used) / 1.049e+6),
+            'disk_total_MiB': round(disk.total / 1.049e+6),
+            'disk_usage_percent': disk.percent
+        }
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
         print("Exiting...")
@@ -217,8 +213,11 @@ def get_disk_info(sysinfo_dict):
 def get_filesystem_type(root_path):
     """ Gets the current file system for the root directory/root disk. """
     try:
+        # Get absolute path to root directory
         path = os.path.abspath(root_path)
+        # Search through list of partitions
         for partition in psutil.disk_partitions(all=True):
+            # Return file system type if path is found as valid mount point
             if path.startswith(partition.mountpoint):
                 return partition.fstype
     except FileNotFoundError:
@@ -230,15 +229,15 @@ def get_filesystem_type(root_path):
         print('Exiting...')
         sys.exit(1)
 
-def get_net_info(sysinfo_dict):
+def get_net_info():
     """ Retrieves information on network interfaces, including IPv4/IPv6 addresses and MAC addresses. """
     # Create nested dictionary for information on network interfaces - this looks nicer in JSON
-    sysinfo_dict['network_interfaces'] = {}
+    network_interfaces = {}
     try:
         # Retrieve complete list of network interfaces from platform
-        network_interfaces = psutil.net_if_addrs()
+        net = psutil.net_if_addrs()
         # For each interface in the list, retrieve name/ipv4/ipv6/MAC and add it to a dict unique to that interface
-        for interface_name, addresses in network_interfaces.items():
+        for interface, addresses in net.items():
             # Create dictionary for current interface
             current_interface = {}
             for addr in addresses:
@@ -249,13 +248,19 @@ def get_net_info(sysinfo_dict):
                 elif addr.family == psutil.AF_LINK:
                     current_interface['mac_address'] = addr.address
             # Append nested dict with the dict for this specific interface
-            sysinfo_dict['network_interfaces'].update({
-                interface_name: current_interface
+            network_interfaces.update({
+                interface: current_interface
             })
+        return network_interfaces
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Network Interface information: {e}')
         print("Exiting...")
         sys.exit(1)
+
+def collect_all():
+    collection = get_hostname_uptime() | get_os_info() | get_cpu_info() | get_mem_info() | get_disk_info()
+    collection['network_interfaces'] = get_net_info()
+    return collection
 
 def flatten_sysinfo_dict(sysinfo_dict, parent_key='', sep='_'):
     """ Flattens dictionary holding system information to facilitate transfer to human-readable CSV. """
