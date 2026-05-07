@@ -11,6 +11,7 @@ sysinfo.py gathers a selection of crucial information about a Windows/macOS/Linu
 - Operating system info:
     - OS type (Windows, macOS, Linux)
     - Windows edition (Core, Professional, etc.)
+    - macOS version codename (Sequoia, Tahoe, etc.)
     - Linux distribution name
     - OS release version (i.e. Windows 11, macOS 26.4)
     - OS kernel version
@@ -18,14 +19,15 @@ sysinfo.py gathers a selection of crucial information about a Windows/macOS/Linu
     - Pretty-printed model name (i.e. AMD Ryzen 7 5800X3D 8-Core Processor, Apple M2)
     - Physical CPU cores
     - Logical CPU cores (threads)
+    - CPU frequency
     - CPU utilization percentage snapshot
-- Virtual memory info:
+- Virtual memory & swap memory info:
     - Amount utilized (MiB)
     - Total amount (MiB)
     - Percent utilized (MiB)
     - Amount free (MiB)
 - Disk info:
-    - Current root directory
+    - Current root directory and filesystem
     - Amount utilized on root device (MiB)
     - Total amount on root device (MiB)
     - Percent utilized on root device (MiB)
@@ -66,14 +68,14 @@ python3 sysinfo.py <screen | csv | json> <output_file>
 TODO: animated GIF with usage example
 
 ### Known Issues
-- Disk usage statistics may not appear properly on a Mac formatted with HFS+/Mac OS Extended (Journaled). (i.e. macOS versions prior to High Sierra.) I don't have any pre-High Sierra Macs so I cannot properly test for this.
+None so far.
 
 **NOTE:** This script was developed and tested using the following operating systems:
 - Windows 11 (25H2)
 - macOS 26.4 (Tahoe)
 - Ubuntu 24.04 LTS
 
-Other versions of these operating systems should work, but please keep this in mind.
+Outside of versions not covered by the requirements, other versions should work; but please keep this in mind.
 
 ## Authors
 Alec Wandy - [@cadazzles](https://github.com/cadazzles)\
