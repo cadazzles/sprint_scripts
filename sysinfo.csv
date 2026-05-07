@@ -1,0 +1,56 @@
+date,2026-05-06 18:39:02.984817
+hostname,plumeria
+boot_timestamp,1778103861.319011
+uptime_duration,3:54:41
+os_type,Windows
+os_version,11
+os_edition,Professional
+os_kernel_version,10.0.26200
+os_arch,AMD64
+cpu_model,AMD Ryzen 7 5800X3D 8-Core Processor
+cpu_physical_cores,8
+cpu_logical_cores,16
+cpu_usage_percent,6.5
+cpu_frequency,3.4
+mem_virtual_memory_used_MiB,15472
+mem_virtual_memory_available_MiB,17212
+mem_virtual_memory_total_MiB,32683
+mem_virtual_memory_util_percent,47.3
+mem_swap_memory_used_MiB,42
+mem_swap_memory_available_MiB,10193
+mem_swap_memory_total_MiB,10236
+mem_swap_memory_util_percent,0.4
+disk_root_dir,C:\
+disk_root_fs,NTFS
+disk_used_MiB,528001
+disk_available_MiB,1377988
+disk_total_MiB,1905989
+disk_usage_percent,27.7
+network_interfaces_vEthernet (SEC444-VirtualSwitch)_mac_address,A8-A1-59-3C-C4-86
+network_interfaces_vEthernet (SEC444-VirtualSwitch)_ipv4_address,10.10.10.10
+network_interfaces_vEthernet (SEC444-VirtualSwitch)_ipv6_address,fe80::a10:32ef:5647:554
+network_interfaces_OpenVPN TAP-Windows6_mac_address,00-FF-2A-0C-2D-8B
+network_interfaces_OpenVPN TAP-Windows6_ipv4_address,169.254.21.95
+network_interfaces_OpenVPN TAP-Windows6_ipv6_address,fe80::8d60:4658:352b:a3e7
+network_interfaces_Wi-Fi_mac_address,F8-E4-E3-27-20-9F
+network_interfaces_Wi-Fi_ipv4_address,169.254.220.233
+network_interfaces_Wi-Fi_ipv6_address,fe80::e183:5542:4da1:5ad2
+network_interfaces_Local Area Connection* 9_mac_address,F8-E4-E3-27-20-A0
+network_interfaces_Local Area Connection* 9_ipv4_address,169.254.62.221
+network_interfaces_Local Area Connection* 9_ipv6_address,fe80::f71f:96bb:4cbc:b084
+network_interfaces_Local Area Connection* 10_mac_address,FA-E4-E3-27-20-9F
+network_interfaces_Local Area Connection* 10_ipv4_address,169.254.240.43
+network_interfaces_Local Area Connection* 10_ipv6_address,fe80::8f11:e5cf:1263:c8d6
+network_interfaces_Bluetooth Network Connection_mac_address,F8-E4-E3-27-20-A3
+network_interfaces_Bluetooth Network Connection_ipv4_address,169.254.7.74
+network_interfaces_Bluetooth Network Connection_ipv6_address,fe80::3f0b:c0aa:9582:dd42
+network_interfaces_vEthernet (Default Switch)_mac_address,00-15-5D-65-53-36
+network_interfaces_vEthernet (Default Switch)_ipv4_address,172.18.16.1
+network_interfaces_vEthernet (Default Switch)_ipv6_address,fe80::68b2:3d3:c4b8:293a
+network_interfaces_vEthernet (WSL (Hyper-V firewall))_mac_address,00-15-5D-7F-62-62
+network_interfaces_vEthernet (WSL (Hyper-V firewall))_ipv4_address,172.18.48.1
+network_interfaces_vEthernet (WSL (Hyper-V firewall))_ipv6_address,fe80::4c40:2856:f90f:a3e6
+network_interfaces_OpenVPN Data Channel Offload_ipv4_address,169.254.63.86
+network_interfaces_OpenVPN Data Channel Offload_ipv6_address,fe80::f15f:6e1b:6772:4d00
+network_interfaces_Loopback Pseudo-Interface 1_ipv4_address,127.0.0.1
+network_interfaces_Loopback Pseudo-Interface 1_ipv6_address,::1

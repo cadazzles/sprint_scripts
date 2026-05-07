@@ -1,0 +1,88 @@
+{
+    "date": "2026-05-06 18:39:05.539954",
+    "hostname": "plumeria",
+    "boot_timestamp": 1778103861.3195033,
+    "uptime_duration": "3:54:44",
+    "os": {
+        "type": "Windows",
+        "version": "11",
+        "edition": "Professional",
+        "kernel_version": "10.0.26200",
+        "arch": "AMD64"
+    },
+    "cpu": {
+        "model": "AMD Ryzen 7 5800X3D 8-Core Processor",
+        "physical_cores": 8,
+        "logical_cores": 16,
+        "usage_percent": 0.9,
+        "frequency": 3.4
+    },
+    "mem": {
+        "virtual_memory_used_MiB": 15478,
+        "virtual_memory_available_MiB": 17206,
+        "virtual_memory_total_MiB": 32683,
+        "virtual_memory_util_percent": 47.4,
+        "swap_memory_used_MiB": 42,
+        "swap_memory_available_MiB": 10193,
+        "swap_memory_total_MiB": 10236,
+        "swap_memory_util_percent": 0.4
+    },
+    "disk": {
+        "root_dir": "C:\\",
+        "root_fs": "NTFS",
+        "used_MiB": 528001,
+        "available_MiB": 1377988,
+        "total_MiB": 1905989,
+        "usage_percent": 27.7
+    },
+    "network_interfaces": {
+        "vEthernet (SEC444-VirtualSwitch)": {
+            "mac_address": "A8-A1-59-3C-C4-86",
+            "ipv4_address": "10.10.10.10",
+            "ipv6_address": "fe80::a10:32ef:5647:554"
+        },
+        "OpenVPN TAP-Windows6": {
+            "mac_address": "00-FF-2A-0C-2D-8B",
+            "ipv4_address": "169.254.21.95",
+            "ipv6_address": "fe80::8d60:4658:352b:a3e7"
+        },
+        "Wi-Fi": {
+            "mac_address": "F8-E4-E3-27-20-9F",
+            "ipv4_address": "169.254.220.233",
+            "ipv6_address": "fe80::e183:5542:4da1:5ad2"
+        },
+        "Local Area Connection* 9": {
+            "mac_address": "F8-E4-E3-27-20-A0",
+            "ipv4_address": "169.254.62.221",
+            "ipv6_address": "fe80::f71f:96bb:4cbc:b084"
+        },
+        "Local Area Connection* 10": {
+            "mac_address": "FA-E4-E3-27-20-9F",
+            "ipv4_address": "169.254.240.43",
+            "ipv6_address": "fe80::8f11:e5cf:1263:c8d6"
+        },
+        "Bluetooth Network Connection": {
+            "mac_address": "F8-E4-E3-27-20-A3",
+            "ipv4_address": "169.254.7.74",
+            "ipv6_address": "fe80::3f0b:c0aa:9582:dd42"
+        },
+        "vEthernet (Default Switch)": {
+            "mac_address": "00-15-5D-65-53-36",
+            "ipv4_address": "172.18.16.1",
+            "ipv6_address": "fe80::68b2:3d3:c4b8:293a"
+        },
+        "vEthernet (WSL (Hyper-V firewall))": {
+            "mac_address": "00-15-5D-7F-62-62",
+            "ipv4_address": "172.18.48.1",
+            "ipv6_address": "fe80::4c40:2856:f90f:a3e6"
+        },
+        "OpenVPN Data Channel Offload": {
+            "ipv4_address": "169.254.63.86",
+            "ipv6_address": "fe80::f15f:6e1b:6772:4d00"
+        },
+        "Loopback Pseudo-Interface 1": {
+            "ipv4_address": "127.0.0.1",
+            "ipv6_address": "::1"
+        }
+    }
+}
