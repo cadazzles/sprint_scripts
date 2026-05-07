@@ -167,6 +167,7 @@ def get_cpu_info(sysinfo_dict):
             'cpu_physical_cores': psutil.cpu_count(logical=False),
             'cpu_logical_cores': psutil.cpu_count(),
             'cpu_usage_percent': psutil.cpu_percent(interval=1),
+            'cpu_freq': round(psutil.cpu_freq().current / 1000, 2)
         })
     # Print a nice error message in the potential case command doesn't exist
     except FileNotFoundError:
@@ -283,7 +284,7 @@ def export_to_screen(sysinfo_dict):
     print(f'OS: {sysinfo_dict['os_type']} {sysinfo_dict['os_version']} {sysinfo_dict['os_edition']} ({sysinfo_dict['os_arch']})')
     print(f'Kernel Version: {sysinfo_dict['os_kernel_version']}')
     print("\n===[CPU Information]====================")
-    print(f'CPU: {sysinfo_dict['cpu_model']} ({sysinfo_dict['cpu_physical_cores']} cores, {sysinfo_dict['cpu_logical_cores']} threads)')
+    print(f'CPU: {sysinfo_dict['cpu_model']} ({sysinfo_dict['cpu_physical_cores']} cores, {sysinfo_dict['cpu_logical_cores']} threads) @ {sysinfo_dict['cpu_freq']} GHz')
     print(f'CPU Usage: {sysinfo_dict['cpu_usage_percent']}%')
     print("\n===[Memory Information]=================")
     print(f'Virtual Memory: {sysinfo_dict['virtual_memory_used_MiB']} MiB / {sysinfo_dict['virtual_memory_total_MiB']} MiB ({sysinfo_dict['virtual_memory_util_percent']}% used, {sysinfo_dict['virtual_memory_available_MiB']} MiB free)')
