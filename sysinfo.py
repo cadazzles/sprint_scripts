@@ -138,7 +138,7 @@ def get_os_info():
     elif CLIENT_PLATFORM == "linux":
         # Retrieves the following information for Linux-based systems
         # Distribution name (i.e. Ubuntu), Distribution version (i.e. 24.04.1 (noble)), Linux kernel version (i.e. 6.6.89-ubuntu-1-1), OS architecture (i.e. AMD64)
-        os_type = distro.name
+        os_type = distro.name()
         os_version = distro.version(pretty=True, best=True)
         os_edition = ''
         os_kernel_version = platform.release()
