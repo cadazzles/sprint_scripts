@@ -182,12 +182,17 @@ def get_cpu_info(sysinfo_dict):
 def get_mem_info(sysinfo_dict):
     """ Retrieves information on memory usage statistics. """
     # Get used virtual memory, available virtual memory, total virtual memory, and percentage utilization
+    # Get used swap, available swap, total swap, and percentage utilization
     # All byte-based values are multiplied by 1.049e+6 to convert from bytes to MiB.
     sysinfo_dict.update({
         'virtual_memory_used_MiB': round((psutil.virtual_memory().total - psutil.virtual_memory().available) / 1.049e+6),
         'virtual_memory_available_MiB': round(psutil.virtual_memory().available / 1.049e+6),
         'virtual_memory_total_MiB': round(psutil.virtual_memory().total / 1.049e+6),
-        'virtual_memory_util_percent': psutil.virtual_memory().percent
+        'virtual_memory_util_percent': psutil.virtual_memory().percent,
+        'swap_memory_used_MiB': round(psutil.swap_memory().used / 1.049e+6),
+        'swap_memory_available_MiB': round(psutil.swap_memory().free / 1.049e+6),
+        'swap_memory_total_MiB': round(psutil.swap_memory().total / 1.049e+6),
+        'swap_memory_util_percent': psutil.swap_memory().percent
     })
 
 def get_disk_info(sysinfo_dict):
@@ -280,8 +285,9 @@ def export_to_screen(sysinfo_dict):
     print("\n===[CPU Information]====================")
     print(f'CPU: {sysinfo_dict['cpu_model']} ({sysinfo_dict['cpu_physical_cores']} cores, {sysinfo_dict['cpu_logical_cores']} threads)')
     print(f'CPU Usage: {sysinfo_dict['cpu_usage_percent']}%')
-    print("\n===[Virtual Memory Information]=========")
+    print("\n===[Memory Information]=================")
     print(f'Virtual Memory: {sysinfo_dict['virtual_memory_used_MiB']} MiB / {sysinfo_dict['virtual_memory_total_MiB']} MiB ({sysinfo_dict['virtual_memory_util_percent']}% used, {sysinfo_dict['virtual_memory_available_MiB']} MiB free)')
+    print(f'Swap Memory: {sysinfo_dict['swap_memory_used_MiB']} MiB / {sysinfo_dict['swap_memory_total_MiB']} MiB ({sysinfo_dict['swap_memory_util_percent']}% used, {sysinfo_dict['swap_memory_available_MiB']} MiB free)')
     print("\n===[Disk Usage Information]=============")
     print(f'Root Directory: {sysinfo_dict['root_dir']} [{sysinfo_dict['root_fs']}]')
     print(f'Disk Usage: {sysinfo_dict['disk_used_MiB']} MiB / {sysinfo_dict['disk_total_MiB']} MiB ({sysinfo_dict['disk_usage_percent']}% used, {sysinfo_dict['disk_available_MiB']} MiB free)')
