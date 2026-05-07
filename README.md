@@ -42,7 +42,7 @@ Information is outputted to either the terminal (stdout), a CSV file, or a JSON 
 ## Getting Started
 ### Dependencies
 - A supported client operating system (Windows, Linux, macOS 11 "Big Sur" or later)
-- Python 3.3 or later
+- Python 3.9 or later
 
 #### Additional dependencies
 - [distro 1.9.0](https://pypi.org/project/distro/)
@@ -51,11 +51,16 @@ Information is outputted to either the terminal (stdout), a CSV file, or a JSON 
 All dependencies are included in the `requirements.txt` file in the project root.
 
 ### Installation
-TODO: installation instructions
+1. Navigate to the `sprint2-sysinfo` branch. You can see this, so you're already here. (Yay!)
+2. Clone the repository via Git by running `git clone -b sprint2-sysinfo https://github.com/cadazzles/sprint_scripts.git` in a terminal, or by downloading a ZIP copy of the current repo state by pressing the **Code** button. Navigate to the repo directory once cloned or unzipped.
+3. **[RECOMMENDED]** Create a virtual environment for installing the required dependencies by running `python3 -m venv .venv/`. (Note: Some Linux distributions omit python3-virtualenv from their default Python install. Use your package manager to install it.)
+4. Activate the virtual environment using the platform specific command: `.\.venv\Scripts\Activate.ps1` for Windows, `source .venv/bin/activate` for macOS/Linux.
+5. Install the required dependencies by using `pip install -r requirements.txt`.
+6. Run the script using `python3 sysinfo.py.` - see usage instructions below for more information.
 
 ### Usage instructions
 ```
-python3 sysinfo.py <screen | csv | json> <output_file>
+$ python3 sysinfo.py <screen | csv | json> <output_file>
 ```
 #### Arguments
 `screen`: Outputs all gathered information to the terminal (standard output).\
@@ -65,7 +70,7 @@ python3 sysinfo.py <screen | csv | json> <output_file>
 `output_file`: Absolute or relative path to the desired output file when operating in CSV or JSON mode. Defaults to `sysinfo.csv` or `sysinfo.json` in the current working directory.
 
 ### Example usage/output
-TODO: animated GIF with usage example
+![Example screen mode output](./media/example_screen_output.png)
 
 ### Known Issues
 None so far.
