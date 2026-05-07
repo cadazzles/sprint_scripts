@@ -114,13 +114,11 @@ def get_os_info():
     if CLIENT_PLATFORM == "win32":
         # Retrieves the following information for Windows-based systems
         # Windows name (i.e. Windows), marketing version (i.e "11"), feature edition (i.e. Professional), build version (i.e. 26200), and OS architecture (i.e. AMD64)
-        return {
-            'os_type': platform.system(),
-            'os_version': platform.release(),
-            'os_edition': platform.win32_edition(),
-            'os_kernel_version': platform.version(),
-            'os_arch': platform.machine()
-        }
+        os_type = platform.system()
+        os_version = platform.release()
+        os_edition = platform.win32_edition()
+        os_kernel_version = platform.version()
+        os_arch = platform.machine()
     elif CLIENT_PLATFORM == "darwin":
         # Retrieves the following information for macOS-based systems
         # macOS, macOS version (i.e. "26.4.1"), macOS version codename (i.e. "Tahoe"), Darwin version (i.e. "25.4"), OS architecture (i.e. arm64)
@@ -135,23 +133,26 @@ def get_os_info():
             '12': 'Monterey',
             '11': 'Big Sur',
         }
-        return {
-            'os_type': 'macOS',
-            'os_version': platform.mac_ver()[0],
-            'os_edition': macOS_codenames[current_codename] if macOS_codenames.get(current_codename) else '',
-            'os_kernel_version': platform.release(),
-            'os_arch': platform.machine()
-        }
+        os_type = 'macOS'
+        os_version = platform.mac_ver()[0]
+        os_edition = macOS_codenames[current_codename] if macOS_codenames.get(current_codename) else ''
+        os_kernel_version = platform.release()
+        os_arch = platform.machine()
     elif CLIENT_PLATFORM == "linux":
         # Retrieves the following information for Linux-based systems
         # Distribution name (i.e. Ubuntu), Distribution version (i.e. 24.04.1 (noble)), Linux kernel version (i.e. 6.6.89-ubuntu-1-1), OS architecture (i.e. AMD64)
-        return {
-            'os_type': distro.name(),
-            'os_version': distro.version(pretty=True, best=True),
-            'os_edition': '',
-            'os_kernel_version': platform.release(),
-            'os_arch': platform.machine()
-        }
+        os_type = distro.name
+        os_version = distro.version(pretty=True, best=True)
+        os_edition = ''
+        os_kernel_version = platform.release()
+        os_arch = platform.machine()
+    return {
+        'type': os_type,
+        'version': os_version,
+        'edition': os_edition,
+        'kernel_version': os_kernel_version,
+        'arch': os_arch
+    }
 
 def get_cpu_info():
     """ Retrieves a basic list of CPU information, including SKU name, cores/threads, and usage metrics. """
@@ -166,11 +167,11 @@ def get_cpu_info():
             cpu_model = subprocess.check_output(GET_CPU_MODEL_CMD).decode().strip()
         return {
             # Get amount of physical cores, logical cores, and system-wide CPU usage (as a percentage recorded over a 1 second interval)
-            'cpu_model': cpu_model,
-            'cpu_physical_cores': psutil.cpu_count(logical=False),
-            'cpu_logical_cores': psutil.cpu_count(),
-            'cpu_usage_percent': psutil.cpu_percent(interval=1),
-            'cpu_freq': round(psutil.cpu_freq().current / 1000, 2)
+            'model': cpu_model,
+            'physical_cores': psutil.cpu_count(logical=False),
+            'logical_cores': psutil.cpu_count(),
+            'usage_percent': psutil.cpu_percent(interval=1),
+            'frequency': round(psutil.cpu_freq().current / 1000, 2)
         }
     # Print a nice error message in the potential case command doesn't exist
     except FileNotFoundError:
@@ -210,10 +211,10 @@ def get_disk_info():
         return {
             'root_dir': ROOT_DIR,
             'root_fs': get_filesystem_type(ROOT_DIR),
-            'disk_used_MiB': round(disk.used / 1.049e+6),
-            'disk_available_MiB': round((disk.total - disk.used) / 1.049e+6),
-            'disk_total_MiB': round(disk.total / 1.049e+6),
-            'disk_usage_percent': disk.percent
+            'used_MiB': round(disk.used / 1.049e+6),
+            'available_MiB': round((disk.total - disk.used) / 1.049e+6),
+            'total_MiB': round(disk.total / 1.049e+6),
+            'usage_percent': disk.percent
         }
     except Exception as e:
         print(f'ERROR: Critical error occurred while attempting to obtain Disk Usage information: {e}')
@@ -269,7 +270,11 @@ def get_net_info():
 
 def collect_all():
     """ Returns a complete merged dictionary containing all collected information. Network interfaces are nested for readability. """
-    collection = get_current_date() | get_hostname() | get_uptime() | get_os_info() | get_cpu_info() | get_mem_info() | get_disk_info()
+    collection = get_current_date() | get_hostname() | get_uptime()
+    collection['os'] = get_os_info()
+    collection['cpu'] = get_cpu_info()
+    collection['mem'] = get_mem_info()
+    collection['disk'] = get_disk_info()
     collection['network_interfaces'] = get_net_info()
     return collection
 
@@ -297,17 +302,17 @@ def export_to_screen(sysinfo_dict):
     print(f'Hostname: {sysinfo_dict['hostname']}')
     print(f'Uptime Duration: {sysinfo_dict['uptime_duration']}')
     print("\n===[Operating System]===================")
-    print(f'OS: {sysinfo_dict['os_type']} {sysinfo_dict['os_version']} {sysinfo_dict['os_edition']} ({sysinfo_dict['os_arch']})')
-    print(f'Kernel Version: {sysinfo_dict['os_kernel_version']}')
+    print(f'OS: {sysinfo_dict['os']['type']} {sysinfo_dict['os']['version']} {sysinfo_dict['os']['edition']} ({sysinfo_dict['os']['arch']})')
+    print(f'Kernel Version: {sysinfo_dict['os']['kernel_version']}')
     print("\n===[CPU Information]====================")
-    print(f'CPU: {sysinfo_dict['cpu_model']} ({sysinfo_dict['cpu_physical_cores']} cores, {sysinfo_dict['cpu_logical_cores']} threads) @ {sysinfo_dict['cpu_freq']} GHz')
-    print(f'CPU Usage: {sysinfo_dict['cpu_usage_percent']}%')
+    print(f'CPU: {sysinfo_dict['cpu']['model']} ({sysinfo_dict['cpu']['physical_cores']} cores, {sysinfo_dict['cpu']['logical_cores']} threads) @ {sysinfo_dict['cpu']['frequency']} GHz')
+    print(f'CPU Usage: {sysinfo_dict['cpu']['usage_percent']}%')
     print("\n===[Memory Information]=================")
-    print(f'Virtual Memory: {sysinfo_dict['virtual_memory_used_MiB']} MiB / {sysinfo_dict['virtual_memory_total_MiB']} MiB ({sysinfo_dict['virtual_memory_util_percent']}% used, {sysinfo_dict['virtual_memory_available_MiB']} MiB free)')
-    print(f'Swap Memory: {sysinfo_dict['swap_memory_used_MiB']} MiB / {sysinfo_dict['swap_memory_total_MiB']} MiB ({sysinfo_dict['swap_memory_util_percent']}% used, {sysinfo_dict['swap_memory_available_MiB']} MiB free)')
+    print(f'Virtual Memory: {sysinfo_dict['mem']['virtual_memory_used_MiB']} MiB / {sysinfo_dict['mem']['virtual_memory_total_MiB']} MiB ({sysinfo_dict['mem']['virtual_memory_util_percent']}% used, {sysinfo_dict['mem']['virtual_memory_available_MiB']} MiB free)')
+    print(f'Swap Memory: {sysinfo_dict['mem']['swap_memory_used_MiB']} MiB / {sysinfo_dict['mem']['swap_memory_total_MiB']} MiB ({sysinfo_dict['mem']['swap_memory_util_percent']}% used, {sysinfo_dict['mem']['swap_memory_available_MiB']} MiB free)')
     print("\n===[Disk Usage Information]=============")
-    print(f'Root Directory: {sysinfo_dict['root_dir']} [{sysinfo_dict['root_fs']}]')
-    print(f'Disk Usage: {sysinfo_dict['disk_used_MiB']} MiB / {sysinfo_dict['disk_total_MiB']} MiB ({sysinfo_dict['disk_usage_percent']}% used, {sysinfo_dict['disk_available_MiB']} MiB free)')
+    print(f'Root Directory: {sysinfo_dict['disk']['root_dir']} [{sysinfo_dict['disk']['root_fs']}]')
+    print(f'Disk Usage: {sysinfo_dict['disk']['used_MiB']} MiB / {sysinfo_dict['disk']['total_MiB']} MiB ({sysinfo_dict['disk']['usage_percent']}% used, {sysinfo_dict['disk']['available_MiB']} MiB free)')
     print("\n===[Network Interfaces]=================")
     # Cycle through nested dict containing network interfaces
     for k,v in sysinfo_dict['network_interfaces'].items():
