@@ -88,23 +88,20 @@ def parse_args():
 
 def get_current_date():
     """ Retrieves the current date in human-readable form. Used for output tracking purposes. """
-    return {
-        'date': str(datetime.now())
-    }
+    return str(datetime.now())
 
 def get_hostname():
     """ Retrieves system hostname in a platform-agnostic way. """
-    return {
-        'hostname': platform.node() # Use platform's best guess for system hostname
-    }
+    return platform.node() # Use platform's best guess for system hostname
 
 def get_uptime():
-    """ Retrieves uptime of the client machine in a platform-agnostic way. """
+    """ Retrieves boot timestamp and uptime of the client machine in a platform-agnostic way. """
     # Get time of last system boot (in seconds since UNIX epoch)
     boot_timestamp = psutil.boot_time()
-    # Turn into timestamp + format into human-readable duration (w/o microseconds)
+    # Turn into duration + format into human-readable text (w/o microseconds)
     uptime_duration = str(timedelta(seconds=time.time() - boot_timestamp)).split('.')[0]
     return {
+        'boot_timestamp': boot_timestamp,
         'uptime_duration': uptime_duration
     }
 
@@ -270,7 +267,11 @@ def get_net_info():
 
 def collect_all():
     """ Returns a complete merged dictionary containing all collected information. Network interfaces are nested for readability. """
-    collection = get_current_date() | get_hostname() | get_uptime()
+    collection = {
+        'date': get_current_date(),
+        'hostname': get_hostname(),
+    }
+    collection.update(get_uptime())
     collection['os'] = get_os_info()
     collection['cpu'] = get_cpu_info()
     collection['mem'] = get_mem_info()
