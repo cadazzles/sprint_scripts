@@ -349,6 +349,7 @@ def export_to_csv(sysinfo_dict, output_file):
         # Export flattened sysinfo dict to CSV
         with open(output_file, "w", newline="") as csv_outfile:
             out = csv.writer(csv_outfile)
+            out.writerow(['Metric', 'Value'])
             out.writerows(flattened_sysinfo.items())
         print(f'Successfully outputted to CSV file \"{output_file}\".')
     except Exception as e:

@@ -1,7 +1,8 @@
-date,2026-05-06 18:39:02.984817
+Metric,Value
+date,2026-05-06 18:40:42.039478
 hostname,plumeria
-boot_timestamp,1778103861.319011
-uptime_duration,3:54:41
+boot_timestamp,1778103861.3189883
+uptime_duration,3:56:20
 os_type,Windows
 os_version,11
 os_edition,Professional
@@ -10,20 +11,20 @@ os_arch,AMD64
 cpu_model,AMD Ryzen 7 5800X3D 8-Core Processor
 cpu_physical_cores,8
 cpu_logical_cores,16
-cpu_usage_percent,6.5
+cpu_usage_percent,8.6
 cpu_frequency,3.4
-mem_virtual_memory_used_MiB,15472
-mem_virtual_memory_available_MiB,17212
+mem_virtual_memory_used_MiB,14464
+mem_virtual_memory_available_MiB,18219
 mem_virtual_memory_total_MiB,32683
-mem_virtual_memory_util_percent,47.3
+mem_virtual_memory_util_percent,44.3
 mem_swap_memory_used_MiB,42
 mem_swap_memory_available_MiB,10193
 mem_swap_memory_total_MiB,10236
 mem_swap_memory_util_percent,0.4
 disk_root_dir,C:\
 disk_root_fs,NTFS
-disk_used_MiB,528001
-disk_available_MiB,1377988
+disk_used_MiB,527959
+disk_available_MiB,1378031
 disk_total_MiB,1905989
 disk_usage_percent,27.7
 network_interfaces_vEthernet (SEC444-VirtualSwitch)_mac_address,A8-A1-59-3C-C4-86
