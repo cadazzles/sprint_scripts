@@ -41,7 +41,7 @@ def main():
     check_script_compat()
     output_mode, output_file = parse_args()
 
-    # Call primary functions for obtaining system info
+    # Collect all system information from relevant functions
     sysinfo_dict = collect_all()
 
     # Determine output mode based on argument
@@ -86,15 +86,25 @@ def parse_args():
 
     return output_mode, output_file
 
-def get_hostname_uptime():
-    """ Retrieves date, hostname and uptime of the client machine in a platform-agnostic way. """
+def get_current_date():
+    """ Retrieves the current date in human-readable form. Used for output tracking purposes. """
+    return {
+        'date': str(datetime.now())
+    }
+
+def get_hostname():
+    """ Retrieves system hostname in a platform-agnostic way. """
+    return {
+        'hostname': platform.node() # Use platform's best guess for system hostname
+    }
+
+def get_uptime():
+    """ Retrieves uptime of the client machine in a platform-agnostic way. """
     # Get time of last system boot (in seconds since UNIX epoch)
     boot_timestamp = psutil.boot_time()
     # Turn into timestamp + format into human-readable duration (w/o microseconds)
     uptime_duration = str(timedelta(seconds=time.time() - boot_timestamp)).split('.')[0]
     return {
-        'date': str(datetime.now()),
-        'hostname': platform.node(), # Use platform's best guess for system hostname
         'uptime_duration': uptime_duration
     }
 
@@ -258,7 +268,8 @@ def get_net_info():
         sys.exit(1)
 
 def collect_all():
-    collection = get_hostname_uptime() | get_os_info() | get_cpu_info() | get_mem_info() | get_disk_info()
+    """ Returns a complete merged dictionary containing all collected information. Network interfaces are nested for readability. """
+    collection = get_current_date() | get_hostname() | get_uptime() | get_os_info() | get_cpu_info() | get_mem_info() | get_disk_info()
     collection['network_interfaces'] = get_net_info()
     return collection
 
