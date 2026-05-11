@@ -1,0 +1,99 @@
+{
+    "date": "2026-05-10 20:29:29.990553",
+    "hostname": "Alecs-MacBook-Air.local",
+    "boot_timestamp": 1776891064.0,
+    "uptime_duration": "18 days, 6:38:25",
+    "os": {
+        "type": "macOS",
+        "version": "26.4.1",
+        "edition": "Tahoe",
+        "kernel_version": "25.4.0",
+        "arch": "arm64"
+    },
+    "cpu": {
+        "model": "Apple M2",
+        "physical_cores": 8,
+        "logical_cores": 8,
+        "usage_percent": 2.2,
+        "frequency": 3.5
+    },
+    "mem": {
+        "virtual_memory_used_MiB": 10143,
+        "virtual_memory_available_MiB": 6235,
+        "virtual_memory_total_MiB": 16377,
+        "virtual_memory_util_percent": 61.9,
+        "swap_memory_used_MiB": 0,
+        "swap_memory_available_MiB": 0,
+        "swap_memory_total_MiB": 0,
+        "swap_memory_util_percent": 0.0
+    },
+    "disk": {
+        "root_dir": "/System/Volumes/Data",
+        "root_fs": "apfs",
+        "used_MiB": 151664,
+        "available_MiB": 319627,
+        "total_MiB": 471292,
+        "usage_percent": 33.8
+    },
+    "network_interfaces": {
+        "lo0": {
+            "ipv4_address": "127.0.0.1",
+            "ipv6_address": "fe80::1%lo0"
+        },
+        "en0": {
+            "ipv4_address": "10.10.10.18",
+            "mac_address": "fa:1c:e5:37:a5:3e",
+            "ipv6_address": "2601:600:807f:a1ea:ec82:9445:e11e:ae56"
+        },
+        "anpi0": {
+            "mac_address": "6e:29:97:f9:1a:b5"
+        },
+        "anpi1": {
+            "mac_address": "6e:29:97:f9:1a:b6"
+        },
+        "en3": {
+            "mac_address": "6e:29:97:f9:1a:95"
+        },
+        "en4": {
+            "mac_address": "6e:29:97:f9:1a:96"
+        },
+        "en1": {
+            "mac_address": "36:57:92:e4:7c:c0"
+        },
+        "en2": {
+            "mac_address": "36:57:92:e4:7c:c4"
+        },
+        "bridge0": {
+            "mac_address": "36:57:92:e4:7c:c0"
+        },
+        "ap1": {
+            "mac_address": "12:0b:5f:d1:47:7a"
+        },
+        "awdl0": {
+            "mac_address": "22:85:c1:59:30:0e",
+            "ipv6_address": "fe80::2085:c1ff:fe59:300e%awdl0"
+        },
+        "llw0": {
+            "mac_address": "22:85:c1:59:30:0e",
+            "ipv6_address": "fe80::2085:c1ff:fe59:300e%llw0"
+        },
+        "utun0": {
+            "ipv6_address": "fe80::2b89:e33f:fe61:e286%utun0"
+        },
+        "utun1": {
+            "ipv6_address": "fe80::c419:abef:40bb:ddb0%utun1"
+        },
+        "utun2": {
+            "ipv6_address": "fe80::68a:72b9:b036:2727%utun2"
+        },
+        "utun3": {
+            "ipv6_address": "fe80::ce81:b1c:bd2c:69e%utun3"
+        },
+        "utun4": {
+            "ipv6_address": "fe80::10b3:fba0:3617:4fc9%utun4"
+        },
+        "utun5": {
+            "ipv6_address": "fe80::2eb1:c2dd:4c87:dda7%utun5"
+        }
+    }
+}
