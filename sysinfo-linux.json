@@ -1,0 +1,50 @@
+{
+    "date": "2026-05-10 20:24:42.271543",
+    "hostname": "plumeria",
+    "boot_timestamp": 1778469665.0,
+    "uptime_duration": "0:03:37",
+    "os": {
+        "type": "Ubuntu",
+        "version": "24.04.4 (noble)",
+        "edition": "",
+        "kernel_version": "6.6.114.1-microsoft-standard-WSL2",
+        "arch": "x86_64"
+    },
+    "cpu": {
+        "model": "AMD Ryzen 7 5800X3D 8-Core Processor",
+        "physical_cores": 8,
+        "logical_cores": 16,
+        "usage_percent": 0.1,
+        "frequency": 3.39
+    },
+    "mem": {
+        "virtual_memory_used_MiB": 682,
+        "virtual_memory_available_MiB": 23341,
+        "virtual_memory_total_MiB": 24022,
+        "virtual_memory_util_percent": 2.8,
+        "swap_memory_used_MiB": 0,
+        "swap_memory_available_MiB": 6142,
+        "swap_memory_total_MiB": 6142,
+        "swap_memory_util_percent": 0.0
+    },
+    "disk": {
+        "root_dir": "/",
+        "root_fs": "ext4",
+        "used_MiB": 7818,
+        "available_MiB": 1022784,
+        "total_MiB": 1030602,
+        "usage_percent": 0.8
+    },
+    "network_interfaces": {
+        "lo": {
+            "ipv4_address": "10.255.255.254",
+            "ipv6_address": "::1",
+            "mac_address": "00:00:00:00:00:00"
+        },
+        "eth0": {
+            "ipv4_address": "172.18.59.193",
+            "ipv6_address": "fe80::215:5dff:fecd:d308%eth0",
+            "mac_address": "00:15:5d:cd:d3:08"
+        }
+    }
+}

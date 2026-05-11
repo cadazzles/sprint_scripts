@@ -1,0 +1,35 @@
+Metric,Value
+date,2026-05-10 20:24:37.933208
+hostname,plumeria
+boot_timestamp,1778469665.0
+uptime_duration,0:03:32
+os_type,Ubuntu
+os_version,24.04.4 (noble)
+os_edition,
+os_kernel_version,6.6.114.1-microsoft-standard-WSL2
+os_arch,x86_64
+cpu_model,AMD Ryzen 7 5800X3D 8-Core Processor
+cpu_physical_cores,8
+cpu_logical_cores,16
+cpu_usage_percent,0.0
+cpu_frequency,3.39
+mem_virtual_memory_used_MiB,686
+mem_virtual_memory_available_MiB,23336
+mem_virtual_memory_total_MiB,24022
+mem_virtual_memory_util_percent,2.9
+mem_swap_memory_used_MiB,0
+mem_swap_memory_available_MiB,6142
+mem_swap_memory_total_MiB,6142
+mem_swap_memory_util_percent,0.0
+disk_root_dir,/
+disk_root_fs,ext4
+disk_used_MiB,7818
+disk_available_MiB,1022784
+disk_total_MiB,1030602
+disk_usage_percent,0.8
+network_interfaces_lo_ipv4_address,10.255.255.254
+network_interfaces_lo_ipv6_address,::1
+network_interfaces_lo_mac_address,00:00:00:00:00:00
+network_interfaces_eth0_ipv4_address,172.18.59.193
+network_interfaces_eth0_ipv6_address,fe80::215:5dff:fecd:d308%eth0
+network_interfaces_eth0_mac_address,00:15:5d:cd:d3:08
