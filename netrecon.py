@@ -77,10 +77,6 @@ def get_open_ports(target_ip):
     # Scan target IP address for most common open ports + retrieve service information
     try:
         nm.scan(target_ip, arguments='-sV')
-    except ImportError:
-        print('ERROR: python-nmap couldn\'t be initialized. Please check to make sure you installed all prerequisites via pip and try to run the script again.')
-        print('Exiting...')
-        sys.exit(1)
     except nmap.PortScannerError:
         # Catch error if nmap is not installed on the system, as we don't install it via pip
         print('ERROR: Couldn\'t find Nmap on your system. Try installing it via your package manager or by browsing to https://nmap.org.')
