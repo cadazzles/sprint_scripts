@@ -21,8 +21,8 @@ DEFAULT_OUTPUT_FILE = "output.csv"
 
 def main():
     """ Primary script entry point - handles parsed cmd arugments and passes them to recon functions before outputting """
-    target_ip, output_file = parse_args()
-    target_geolocation, target_scan_data = collect_all(target_ip)
+    target_ip, output_file, is_public_ip = parse_args()
+    target_geolocation, target_scan_data = collect_all(target_ip, is_public_ip)
     export_to_screen(target_geolocation, target_scan_data)
 
 def parse_args():
@@ -35,7 +35,7 @@ def parse_args():
         sys.exit(1)
     # Validate that the IP address supplied is a "real" IP address
     try:
-        ipaddress.ip_address(target_ip)
+        check_ip = ipaddress.ip_address(target_ip)
     except ValueError:
         # Exit with error code if IP address is not valid
         print("ERROR: Supplied IP address is not a valid IPv4/IPv6 address.")
@@ -43,20 +43,28 @@ def parse_args():
     output_file = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT_FILE
     if not output_file.endswith(".csv"):
         output_file += ".csv"
-    
-    return target_ip, output_file
 
-def get_ip_geolocation(target_ip):
+    if check_ip.is_private:
+        is_public_ip = False
+    else:
+        is_public_ip = True
+    
+    return target_ip, output_file, is_public_ip
+
+def get_ip_geolocation(target_ip, is_public_ip):
     """ Uses ip-api.com's public API via requests to retrieve JSON-encoded geolocation info on the target IP. Returns a dict with info. """
     # Uses requests to send HTTP GET to ip-api's endpoint
-    try:
-        api_response = requests.get(f'http://ip-api.com/json/{target_ip}')
-    except Exception as e:
-        print(f'ERROR: Failed to retrieve a result from ip-api.com endpoint - Reason: {e}.')
-        print(f'Exiting...')
-        sys.exit(1)
-    # Encode response as JSON; JSON is naturally a dict, which is what we want
-    target_geolocation = api_response.json()
+    if is_public_ip:
+        try:
+            api_response = requests.get(f'http://ip-api.com/json/{target_ip}')
+        except Exception as e:
+            print(f'ERROR: Failed to retrieve a result from ip-api.com endpoint - Reason: {e}.')
+            print(f'Exiting...')
+            sys.exit(1)
+        # Encode response as JSON; JSON is naturally a dict, which is what we want
+        target_geolocation = api_response.json()
+    else:
+        target_geolocation = { 'query': target_ip }
     return target_geolocation
 
 def get_open_ports(target_ip):
@@ -76,10 +84,10 @@ def get_open_ports(target_ip):
         sys.exit(1)
     return nm
 
-def collect_all(target_ip):
+def collect_all(target_ip, is_public_ip):
     console = Console()
     with console.status(f'[bold]Performing reconnaisance on target IP {target_ip} - this may take a while...[/bold]') as status:
-        target_geolocation = get_ip_geolocation(target_ip)
+        target_geolocation = get_ip_geolocation(target_ip, is_public_ip)
         console.log("Successfully retrieved geolocation information.")
         target_scan_data = get_open_ports(target_ip)
         console.log("Successfully retrieved Nmap scan data.")
@@ -89,9 +97,12 @@ def export_to_screen(target_geolocation, target_scan_data):
     """ Exports collected geolocation and port scanning data to the screen in a human-readable manner. """
     print(f'\n[bold]Target IP Address:[/bold] {target_geolocation['query']}')
     print(f'======[Geolocation Info]==================')
-    print(f'[bold]Country:[/bold] {target_geolocation['country']} ({target_geolocation['countryCode']})')
-    print(f'[bold]City & State/Region:[/bold] {target_geolocation['city']}, {target_geolocation['regionName']} ({target_geolocation['region']})')
-    print(f'[bold]ISP:[/bold] {target_geolocation['isp']}')
+    if 'country' in target_geolocation:
+        print(f'[bold]Country:[/bold] {target_geolocation['country']} ({target_geolocation['countryCode']})')
+        print(f'[bold]City & State/Region:[/bold] {target_geolocation['city']}, {target_geolocation['regionName']} ({target_geolocation['region']})')
+        print(f'[bold]ISP:[/bold] {target_geolocation['isp']}')
+    else:
+        print(f'Local/Private IP (no geolocation data)')
     print(f'======[Nmap Port Scan (top 1000 ports)]===')
     for host in target_scan_data.all_hosts():
         for proto in target_scan_data[host].all_protocols():
