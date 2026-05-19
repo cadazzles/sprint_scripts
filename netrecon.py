@@ -40,30 +40,33 @@ def parse_args():
         # Exit with error code if IP address is not valid
         print("ERROR: Supplied IP address is not a valid IPv4/IPv6 address.")
         sys.exit(1)
+    # Use default output filename if there is no replacement
     output_file = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_OUTPUT_FILE
+    # Add CSV extension if not present in custom filename
     if not output_file.endswith(".csv"):
         output_file += ".csv"
-
+    # Check if target IP address resides within private address space (this affects geolocation)
     if check_ip.is_private:
         is_public_ip = False
     else:
         is_public_ip = True
-    
     return target_ip, output_file, is_public_ip
 
 def get_ip_geolocation(target_ip, is_public_ip):
     """ Uses ip-api.com's public API via requests to retrieve JSON-encoded geolocation info on the target IP. Returns a dict with info. """
-    # Uses requests to send HTTP GET to ip-api's endpoint
+    # Uses requests to send HTTP GET to ip-api's endpoint if we have a public IP
     if is_public_ip:
         try:
             api_response = requests.get(f'http://ip-api.com/json/{target_ip}')
         except Exception as e:
+            # Handle errors: inaccessible api endpoint, response taking too long due to network issues, etc
             print(f'ERROR: Failed to retrieve a result from ip-api.com endpoint - Reason: {e}.')
             print(f'Exiting...')
             sys.exit(1)
         # Encode response as JSON; JSON is naturally a dict, which is what we want
         target_geolocation = api_response.json()
     else:
+        # only return the target ip address (for export) if the IP address is private
         target_geolocation = { 'query': target_ip }
     return target_geolocation
 
@@ -79,13 +82,17 @@ def get_open_ports(target_ip):
         print('Exiting...')
         sys.exit(1)
     except nmap.PortScannerError:
+        # Catch error if nmap is not installed on the system, as we don't install it via pip
         print('ERROR: Couldn\'t find Nmap on your system. Try installing it via your package manager or by browsing to https://nmap.org.')
         print('Exiting...')
         sys.exit(1)
     return nm
 
 def collect_all(target_ip, is_public_ip):
+    """ Passes target IP and IP public/private status into collector functions to retrieve information. Displays a helpful spinner and progress text."""
+    # Create rich console object (only used for spinner)
     console = Console()
+    # Create progress spinner with helper text
     with console.status(f'[bold]Performing reconnaisance on target IP {target_ip} - this may take a while...[/bold]') as status:
         target_geolocation = get_ip_geolocation(target_ip, is_public_ip)
         console.log("Successfully retrieved geolocation information.")
@@ -97,6 +104,7 @@ def export_to_screen(target_geolocation, target_scan_data):
     """ Exports collected geolocation and port scanning data to the screen in a human-readable manner. """
     print(f'\n[bold]Target IP Address:[/bold] {target_geolocation['query']}')
     print(f'======[Geolocation Info]==================')
+    # If dealing with a public IP...
     if 'country' in target_geolocation:
         print(f'[bold]Country:[/bold] {target_geolocation['country']} ({target_geolocation['countryCode']})')
         print(f'[bold]City & State/Region:[/bold] {target_geolocation['city']}, {target_geolocation['regionName']} ({target_geolocation['region']})')
@@ -104,12 +112,15 @@ def export_to_screen(target_geolocation, target_scan_data):
     else:
         print(f'Local/Private IP (no geolocation data)')
     print(f'======[Nmap Port Scan (top 1000 ports)]===')
+    # Cycle through the massive Nmap results dictionary to get port, service, and state of each port, since that's all we want
     for host in target_scan_data.all_hosts():
         for proto in target_scan_data[host].all_protocols():
+            # Print header text, alongside differentiation between tcp and udp
             print(f'[[bold]Protocol:[/bold] {proto}]')
             print(f'{"Port":<5} {"Service":<12} {"State":<10}')
+            # Sort results in numerical order
             sorted_ports = sorted(target_scan_data[host][proto].keys())
-
+            # Print results per port
             for port in sorted_ports:
                 service = target_scan_data[host][proto][port]['name']
                 state = target_scan_data[host][proto][port]['state']
