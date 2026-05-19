@@ -1,6 +1,6 @@
 # netrecon.py
 
-Somewhat comprehensive port scanning and IP geolocator written in Python featuring terminal and CSV output and a built in SSH client for accessing open targets.
+Pretty-printing port scanning and IP geolocator written in Python featuring terminal and CSV output and a built in SSH client for accessing open targets.
 Created for SEC444: Security Automation as part of the third sprint (sprint3).
 
 ## Description
@@ -9,7 +9,7 @@ TODO
 ## Getting Started
 ### Dependencies
 - A supported client operating system (macOS or Linux)
-- Python 3.3 or later
+- Python 3.9 or later
 - [Nmap](https://nmap.org/) 7.99 or later (must be present in $PATH)
 
 #### Additional dependencies
@@ -19,6 +19,10 @@ TODO
 - [python-nmap 0.7.1](https://pypi.org/project/python-nmap)
 - [requests 2.34.2](https://pypi.org/project/requests)
 - [urllib3 2.7.0](https://pypi.org/project/urllib3)
+- [markdown-it-py 4.2.0](https://pypi.org/project/markdown-it-py)
+- [mdurl 0.1.2](https://pypi.org/project/mdurl)
+- [Pygments 2.20.0](https://pypi.org/project/Pygments)
+- [rich 15.0.0](https://pypi.org/project/rich)
 
 All module dependencies are listed in `requirements.txt` in the project root.
 
