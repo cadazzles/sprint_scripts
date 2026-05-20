@@ -1,10 +1,18 @@
 # netrecon.py
 
-Pretty-printing port scanning and IP geolocator written in Python featuring terminal and CSV output and a built in SSH client for accessing open targets.
+Pretty-printing port scanning and IP geolocator written in Python featuring terminal and CSV output.
 Created for SEC444: Security Automation as part of the third sprint (sprint3).
 
 ## Description
-TODO
+netrecon takes a public or private IPv4/IPv6 address as a target, and performs two main functions:
+- Queries a public IP geolocation API (ip-api.com) to retrieve geolocation data (API key *not* required!) to retrieve:
+    - Country & Country Code (i.e. `United States (US)`)
+    - City & State/Region (i.e. `Seattle, Washington (WA)`)
+    - ISP (i.e. `Akamai Technologies, Inc.`)
+- Uses python-nmap to call a local Nmap installation to query the top 1000 ports on the target host
+    - Ports are sorted by protocol, listed by port number, service name, and state
+
+After the relevant information is acquired, everything is pretty-printed to the terminal and to a CSV file.
 
 ## Getting Started
 ### Dependencies
@@ -27,16 +35,31 @@ TODO
 All module dependencies are listed in `requirements.txt` in the project root.
 
 ## Installation
-TODO
+1. Install Nmap (tested on v7.99) using your operating system's preferred method.
+    - Windows: Download the latest version of Nmap [here](https://nmap.org/download), or install it with Winget by using `winget install -e --id Insecure.Nmap`.
+    - macOS: Download the latest version of Nmap [here](https://nmap.org/download), or install it via Homebrew/MacPorts.
+    - Linux: Use your distribution's native package manager (i.e. `apt`, `dnf`, `pacman`).
+2. Navigate to the sprint3-netrecon branch. You can see these instructions, so you're already here. (Yay!)
+3. Clone the repository via Git by running `git clone -b sprint3-netrecon https://github.com/cadazzles/sprint_scripts.git` in a terminal, or by downloading a ZIP copy of the current repo state using the **Code** button
+4. Navigate to the repo directory once cloned or unzipped.
+5. **[RECOMMENDED]** Create a virtual environment to safely install required dependencies by running `python3 -m venv .venv/`. (Note: Some Linux distributions omit python3-virtualenv from their default Python install. Use your distro's package manager to install it.)
+6. Activate the virtual environment using the platform specific command: `.\.venv\Scripts\Activate.ps1` for Windows, `source .venv/bin/activate` for macOS/Linux.
+7. Install all required dependencies by using `pip install -r requirements.txt`
+8. Run the script using `python3 netrecon.py` - see usage instructions below for more information.
 
 ### Usage instructions
-TODO
-
+```
+$ python3 netrecon.py <target_ip> <optional: outfile.csv>
+```
 #### Arguments
+`target_ip`: Public or private IP address to perform geolocation and scanning operations against. Using a private IP as a target will disable geolocation.
+
+`outfile.csv`: Absolute or relative path to the desired output file (CSV format). Defaults to `output.csv` in the current working directory when no name is provided.
 
 ### Example Usage/Output
 
 ## Known Issues
+None so far.
 
 ## Authors
 Alec Wandy - [@cadazzles](https://github.com/cadazzles)\
