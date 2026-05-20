@@ -13,17 +13,23 @@ import sys
 import requests
 import ipaddress
 import nmap
+import csv
+from time import sleep
 from rich import print
 from rich.console import Console
 
 # Constants
 DEFAULT_OUTPUT_FILE = "output.csv"
 
+# Create console object for pretty-printing via rich
+console = Console()
+
 def main():
     """ Primary script entry point - handles parsed cmd arugments and passes them to recon functions before outputting """
     target_ip, output_file, is_public_ip = parse_args()
     target_geolocation, target_scan_data = collect_all(target_ip, is_public_ip)
     export_to_screen(target_geolocation, target_scan_data)
+    export_to_csv(target_geolocation, target_scan_data, output_file)
 
 def parse_args():
     """ Parses arguments taken from the command line, including exception handling for missing/incorrect arguments"""
@@ -87,11 +93,13 @@ def get_open_ports(target_ip):
 def collect_all(target_ip, is_public_ip):
     """ Passes target IP and IP public/private status into collector functions to retrieve information. Displays a helpful spinner and progress text."""
     # Create rich console object (only used for spinner)
-    console = Console()
     # Create progress spinner with helper text
-    with console.status(f'[bold]Performing reconnaisance on target IP {target_ip} - this may take a while...[/bold]') as status:
+    with console.status(f'[bold]Performing reconnaisance on target IP {target_ip}...[/bold]') as status:
+        sleep(1) # Briefly pause all processing to make initial helper text readable
+        status.update(f'[bold]Obtaining IP geolocation information for target IP {target_ip}...[/bold]')
         target_geolocation = get_ip_geolocation(target_ip, is_public_ip)
         console.log("Successfully retrieved geolocation information.")
+        status.update(f'[bold]Scanning top 1000 ports on {target_ip} via Nmap - this may take a while...[/bold]')
         target_scan_data = get_open_ports(target_ip)
         console.log("Successfully retrieved Nmap scan data.")
     return target_geolocation, target_scan_data
@@ -99,15 +107,15 @@ def collect_all(target_ip, is_public_ip):
 def export_to_screen(target_geolocation, target_scan_data):
     """ Exports collected geolocation and port scanning data to the screen in a human-readable manner. """
     print(f'\n[bold]Target IP Address:[/bold] {target_geolocation['query']}')
-    print(f'======[Geolocation Info]==================')
+    print(f'\n[magenta]===[Geolocation Info]===[/magenta]')
     # If dealing with a public IP...
     if 'country' in target_geolocation:
         print(f'[bold]Country:[/bold] {target_geolocation['country']} ({target_geolocation['countryCode']})')
         print(f'[bold]City & State/Region:[/bold] {target_geolocation['city']}, {target_geolocation['regionName']} ({target_geolocation['region']})')
         print(f'[bold]ISP:[/bold] {target_geolocation['isp']}')
     else:
-        print(f'Local/Private IP (no geolocation data)')
-    print(f'======[Nmap Port Scan (top 1000 ports)]===')
+        console.print(f'[bold]Local/Private IP [red](no geolocation data)[/red][/bold]')
+    console.print(f'\n[magenta]===[Nmap Port Scan (top 1000 ports)]===[/magenta]', highlight=False)
     # Cycle through the massive Nmap results dictionary to get port, service, and state of each port, since that's all we want
     for host in target_scan_data.all_hosts():
         for proto in target_scan_data[host].all_protocols():
@@ -121,6 +129,38 @@ def export_to_screen(target_geolocation, target_scan_data):
                 service = target_scan_data[host][proto][port]['name']
                 state = target_scan_data[host][proto][port]['state']
                 print(f'{port:<5} {service:<12} {state:<10}')
+
+def export_to_csv(target_geolocation, target_scan_data, output_file):
+    try:
+        with console.status(f'[bold]Exporting results in CSV-format to {output_file}...') as status:
+            sleep(1)
+            with open(output_file, 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(['Target IP:', target_geolocation['query']])
+                if 'country' in target_geolocation:
+                    writer.writerow(['Country:', target_geolocation['country']])
+                    writer.writerow(['Country Code:', target_geolocation['countryCode']])
+                    writer.writerow(['City:', target_geolocation['city']])
+                    writer.writerow(['State/Region:', target_geolocation['regionName']])
+                    writer.writerow(['State/Region Code:', target_geolocation['region']])
+                    writer.writerow(['ISP:', target_geolocation['isp']])
+                else:
+                    writer.writerow('Local/Private IP (no geolocation data)')
+
+                writer.writerow(['Protocol', 'Port', 'Service', 'State'])
+                for host in target_scan_data.all_hosts():
+                    for proto in target_scan_data[host].all_protocols():
+                        sorted_ports = sorted(target_scan_data[host][proto].keys())
+                        for port in sorted_ports:
+                            service = target_scan_data[host][proto][port]['name']
+                            state = target_scan_data[host][proto][port]['state']
+                            writer.writerow([proto, port, service, state])
+            console.log(f"Successfully exported to CSV at {output_file}.")
+    except:
+        print('ERROR: Failed to write CSV file to chosen path/filename.')
+        print('Exiting...')
+        sys.exit(1)
+        
 
 # Run main() if called directly from cmd, otherwise function as import library
 if __name__ == '__main__':
