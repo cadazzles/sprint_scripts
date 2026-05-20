@@ -14,7 +14,6 @@ import requests
 import ipaddress
 import nmap
 import csv
-from time import sleep
 from rich import print
 from rich.console import Console
 
