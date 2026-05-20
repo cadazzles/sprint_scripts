@@ -1,4 +1,4 @@
-# netrecon.py
+![netrecon.py](media/netrecon-logo.png)
 
 Pretty-printing port scanning and IP geolocator written in Python featuring terminal and CSV output.
 Created for SEC444: Security Automation as part of the third sprint (sprint3).
