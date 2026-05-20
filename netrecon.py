@@ -22,7 +22,7 @@ from rich.console import Console
 DEFAULT_OUTPUT_FILE = "output.csv"
 
 # Create console object for pretty-printing via rich
-console = Console()
+console = Console(log_time=False, log_path=False)
 
 def main():
     """ Primary script entry point - handles parsed cmd arugments and passes them to recon functions before outputting """
@@ -95,7 +95,6 @@ def collect_all(target_ip, is_public_ip):
     # Create rich console object (only used for spinner)
     # Create progress spinner with helper text
     with console.status(f'[bold]Performing reconnaisance on target IP {target_ip}...[/bold]') as status:
-        sleep(1) # Briefly pause all processing to make initial helper text readable
         status.update(f'[bold]Obtaining IP geolocation information for target IP {target_ip}...[/bold]')
         target_geolocation = get_ip_geolocation(target_ip, is_public_ip)
         console.log("Successfully retrieved geolocation information.")
@@ -131,9 +130,9 @@ def export_to_screen(target_geolocation, target_scan_data):
                 print(f'{port:<5} {service:<12} {state:<10}')
 
 def export_to_csv(target_geolocation, target_scan_data, output_file):
+    """ Exports collected geolocation and port scanning data to CSV so they can be retrieved and viewed later. """
     try:
         with console.status(f'[bold]Exporting results in CSV-format to {output_file}...') as status:
-            sleep(1)
             with open(output_file, 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(['Target IP:', target_geolocation['query']])
@@ -146,7 +145,6 @@ def export_to_csv(target_geolocation, target_scan_data, output_file):
                     writer.writerow(['ISP:', target_geolocation['isp']])
                 else:
                     writer.writerow('Local/Private IP (no geolocation data)')
-
                 writer.writerow(['Protocol', 'Port', 'Service', 'State'])
                 for host in target_scan_data.all_hosts():
                     for proto in target_scan_data[host].all_protocols():
@@ -155,7 +153,7 @@ def export_to_csv(target_geolocation, target_scan_data, output_file):
                             service = target_scan_data[host][proto][port]['name']
                             state = target_scan_data[host][proto][port]['state']
                             writer.writerow([proto, port, service, state])
-            console.log(f"Successfully exported to CSV at {output_file}.")
+            console.log(f'\nSuccessfully exported results to CSV at {output_file}.')
     except:
         print('ERROR: Failed to write CSV file to chosen path/filename.')
         print('Exiting...')
