@@ -39,13 +39,14 @@ All module dependencies are listed in `requirements.txt` in the project root.
     - Windows: Download the latest version of Nmap [here](https://nmap.org/download), or install it with Winget by using `winget install -e --id Insecure.Nmap`.
     - macOS: Download the latest version of Nmap [here](https://nmap.org/download), or install it via Homebrew/MacPorts.
     - Linux: Use your distribution's native package manager (i.e. `apt`, `dnf`, `pacman`).
-2. Navigate to the sprint3-netrecon branch. You can see these instructions, so you're already here. (Yay!)
-3. Clone the repository via Git by running `git clone -b sprint3-netrecon https://github.com/cadazzles/sprint_scripts.git` in a terminal, or by downloading a ZIP copy of the current repo state using the **Code** button
-4. Navigate to the repo directory once cloned or unzipped.
-5. **[RECOMMENDED]** Create a virtual environment to safely install required dependencies by running `python3 -m venv .venv/`. (Note: Some Linux distributions omit python3-virtualenv from their default Python install. Use your distro's package manager to install it.)
-6. Activate the virtual environment using the platform specific command: `.\.venv\Scripts\Activate.ps1` for Windows, `source .venv/bin/activate` for macOS/Linux.
-7. Install all required dependencies by using `pip install -r requirements.txt`
-8. Run the script using `python3 netrecon.py` - see usage instructions below for more information.
+2. Make sure that Nmap is present in your shell's $PATH by running `nmap` from the terminal. The Nmap version/help text should appear.
+3. Navigate to the sprint3-netrecon branch. You can see these instructions, so you're already here. (Yay!)
+4. Clone the repository via Git by running `git clone -b sprint3-netrecon https://github.com/cadazzles/sprint_scripts.git` in a terminal, or by downloading a ZIP copy of the current repo state using the **Code** button
+5. Navigate to the repo directory once cloned or unzipped.
+6. **[RECOMMENDED]** Create a virtual environment to safely install required dependencies by running `python3 -m venv .venv/`. (Note: Some Linux distributions omit python3-virtualenv from their default Python install. Use your distro's package manager to install it.)
+7. Activate the virtual environment using the platform specific command: `.\.venv\Scripts\Activate.ps1` for Windows, `source .venv/bin/activate` for macOS/Linux.
+8. Install all required dependencies by using `pip install -r requirements.txt`
+9. Run the script using `python3 netrecon.py` - see usage instructions below for more information.
 
 ### Usage instructions
 ```
