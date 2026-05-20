@@ -105,7 +105,7 @@ def collect_all(target_ip, is_public_ip):
 def export_to_screen(target_geolocation, target_scan_data):
     """ Exports collected geolocation and port scanning data to the screen in a human-readable manner. """
     print(f'\n[bold]Target IP Address:[/bold] {target_geolocation['query']}')
-    print(f'\n[magenta]===[Geolocation Info]===[/magenta]')
+    console.print(f'\n[magenta]===[Geolocation Info]===[/magenta]', highlight=False)
     # If dealing with a public IP...
     if 'country' in target_geolocation:
         print(f'[bold]Country:[/bold] {target_geolocation['country']} ({target_geolocation['countryCode']})')
@@ -118,7 +118,7 @@ def export_to_screen(target_geolocation, target_scan_data):
     for host in target_scan_data.all_hosts():
         for proto in target_scan_data[host].all_protocols():
             # Print header text, alongside differentiation between tcp and udp
-            print(f'[[bold]Protocol:[/bold] {proto}]')
+            console.print(f'[[bold]Protocol:[/bold] {proto}]', highlight=False)
             print(f'{"Port":<5} {"Service":<12} {"State":<10}')
             # Sort results in numerical order
             sorted_ports = sorted(target_scan_data[host][proto].keys())
