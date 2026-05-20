@@ -105,7 +105,7 @@ def collect_all(target_ip, is_public_ip):
 def export_to_screen(target_geolocation, target_scan_data):
     """ Exports collected geolocation and port scanning data to the screen in a human-readable manner. """
     print(f'\n[bold]Target IP Address:[/bold] {target_geolocation['query']}')
-    console.print(f'\n[magenta]===[Geolocation Info]===[/magenta]', highlight=False)
+    console.print(f'[magenta]===[Geolocation Info]===[/magenta]', highlight=False)
     # If dealing with a public IP...
     if 'country' in target_geolocation:
         print(f'[bold]Country:[/bold] {target_geolocation['country']} ({target_geolocation['countryCode']})')
