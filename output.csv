@@ -1,0 +1,16 @@
+Target IP:,45.33.32.156
+Country:,United States
+Country Code:,US
+City:,Fremont
+State/Region:,California
+State/Region Code:,CA
+ISP:,"Akamai Technologies, Inc."
+Protocol,Port,Service,State
+tcp,22,ssh,open
+tcp,25,smtp,filtered
+tcp,80,http,open
+tcp,135,msrpc,filtered
+tcp,139,netbios-ssn,filtered
+tcp,445,microsoft-ds,filtered
+tcp,9929,nping-echo,open
+tcp,31337,tcpwrapped,open
