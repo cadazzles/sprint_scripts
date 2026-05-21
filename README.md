@@ -58,6 +58,7 @@ $ python3 netrecon.py <target_ip> <optional: outfile.csv>
 `outfile.csv`: Absolute or relative path to the desired output file (CSV format). Defaults to `output.csv` in the current working directory when no name is provided.
 
 ### Example Usage/Output
+![example usage on macOS gif](./media/netrecon-usage-opt.gif)
 
 ## Known Issues
 None so far.

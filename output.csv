@@ -6,7 +6,7 @@ State/Region:,California
 State/Region Code:,CA
 ISP:,"Akamai Technologies, Inc."
 Protocol,Port,Service,State
-tcp,22,ssh,open
+tcp,22,tcpwrapped,open
 tcp,25,smtp,filtered
 tcp,80,http,open
 tcp,135,msrpc,filtered
