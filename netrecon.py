@@ -21,7 +21,7 @@ from rich.console import Console
 DEFAULT_OUTPUT_FILE = "output.csv"
 
 # Create console object for pretty-printing via rich
-console = Console(log_time=False, log_path=False)
+console = Console(log_time=True, log_path=False)
 
 def main():
     """ Primary script entry point - handles parsed cmd arugments and passes them to recon functions before outputting """
