@@ -153,12 +153,11 @@ def export_to_csv(target_geolocation, target_scan_data, output_file):
                             state = target_scan_data[host][proto][port]['state']
                             writer.writerow([proto, port, service, state])
             console.log(f'\nSuccessfully exported results to CSV at {output_file}.')
-    except:
-        print('ERROR: Failed to write CSV file to chosen path/filename.')
+    except Exception as e:
+        print(f'ERROR: Failed to write CSV file to chosen path/filename (Reason: {e})')
         print('Exiting...')
         sys.exit(1)
         
-
 # Run main() if called directly from cmd, otherwise function as import library
 if __name__ == '__main__':
     main()
