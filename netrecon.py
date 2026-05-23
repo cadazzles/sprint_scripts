@@ -21,14 +21,14 @@ from rich.console import Console
 DEFAULT_OUTPUT_FILE = "output.csv"
 
 # Create console object for pretty-printing via rich
-console = Console(log_time=True, log_path=False)
+console = Console(log_time=False, log_path=False)
 
 def main():
     """ Primary script entry point - handles parsed cmd arugments and passes them to recon functions before outputting """
     target_ip, output_file, is_public_ip = parse_args()
     target_geolocation, target_scan_data = collect_all(target_ip, is_public_ip)
-    export_to_screen(target_geolocation, target_scan_data)
-    export_to_csv(target_geolocation, target_scan_data, output_file)
+    export_to_screen(target_geolocation, target_scan_data, is_public_ip)
+    export_to_csv(target_geolocation, target_scan_data, is_public_ip, output_file)
 
 def parse_args():
     """ Parses arguments taken from the command line, including exception handling for missing/incorrect arguments"""
@@ -63,15 +63,10 @@ def get_ip_geolocation(target_ip, is_public_ip):
     if is_public_ip:
         try:
             api_response = requests.get(f'http://ip-api.com/json/{target_ip}', timeout=10)
-        except requests.exceptions.Timeout:
-            print(f'ERROR: The attempt to form a connection to the ip-api.com API took too long!')
-            print('Exiting...')
-            sys.exit(1)
         except Exception as e:
             # Handle errors: inaccessible api endpoint, response taking too long due to network issues, etc
             print(f'ERROR: Failed to retrieve a result from ip-api.com endpoint - Reason: {e}.')
-            print(f'Exiting...')
-            sys.exit(1)
+            target_geolocation = { 'query': target_ip }
         # Encode response as JSON; JSON is naturally a dict, which is what we want
         target_geolocation = api_response.json()
     else:
@@ -106,17 +101,19 @@ def collect_all(target_ip, is_public_ip):
         console.log("Successfully retrieved Nmap scan data.")
     return target_geolocation, target_scan_data
 
-def export_to_screen(target_geolocation, target_scan_data):
+def export_to_screen(target_geolocation, target_scan_data, is_public_ip):
     """ Exports collected geolocation and port scanning data to the screen in a human-readable manner. """
     print(f'\n[bold]Target IP Address:[/bold] {target_geolocation['query']}')
     console.print(f'[magenta]===[Geolocation Info]===[/magenta]', highlight=False)
     # If dealing with a public IP...
-    if 'country' in target_geolocation:
+    if is_public_ip == True and 'country' in target_geolocation:
         print(f'[bold]Country:[/bold] {target_geolocation['country']} ({target_geolocation['countryCode']})')
         print(f'[bold]City & State/Region:[/bold] {target_geolocation['city']}, {target_geolocation['regionName']} ({target_geolocation['region']})')
-        print(f'[bold]ISP:[/bold] {target_geolocation['isp']}')
-    else:
+        print(f'[bold]ISP:[/bold] {target_geolocation['isp']}')        
+    elif is_public_ip == False:
         console.print(f'[bold]Local/Private IP [red](no geolocation data)[/red][/bold]')
+    else:
+        console.print(f'[bold red]API Error:[/bold red] Failed to obtain geolocation data.')
     console.print(f'\n[magenta]===[Nmap Port Scan (top 1000 ports)]===[/magenta]', highlight=False)
     # Cycle through the massive Nmap results dictionary to get port, service, and state of each port, since that's all we want
     for host in target_scan_data.all_hosts():
@@ -132,22 +129,24 @@ def export_to_screen(target_geolocation, target_scan_data):
                 state = target_scan_data[host][proto][port]['state']
                 print(f'{port:<5} {service:<12} {state:<10}')
 
-def export_to_csv(target_geolocation, target_scan_data, output_file):
+def export_to_csv(target_geolocation, target_scan_data, is_public_ip, output_file):
     """ Exports collected geolocation and port scanning data to CSV so they can be retrieved and viewed later. """
     try:
         with console.status(f'[bold]Exporting results in CSV-format to {output_file}...') as status:
             with open(output_file, 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerow(['Target IP:', target_geolocation['query']])
-                if 'country' in target_geolocation:
+                if is_public_ip == True and 'country' in target_geolocation:
                     writer.writerow(['Country:', target_geolocation['country']])
                     writer.writerow(['Country Code:', target_geolocation['countryCode']])
                     writer.writerow(['City:', target_geolocation['city']])
                     writer.writerow(['State/Region:', target_geolocation['regionName']])
                     writer.writerow(['State/Region Code:', target_geolocation['region']])
                     writer.writerow(['ISP:', target_geolocation['isp']])
+                elif is_public_ip == False:
+                    writer.writerow(['Local/Private IP (no geolocation data)'])
                 else:
-                    writer.writerow('Local/Private IP (no geolocation data)')
+                    writer.writerow(['API Error: failed to obtain geolocation data'])
                 writer.writerow(['Protocol', 'Port', 'Service', 'State'])
                 for host in target_scan_data.all_hosts():
                     for proto in target_scan_data[host].all_protocols():
