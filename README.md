@@ -16,7 +16,7 @@ After the relevant information is acquired, everything is pretty-printed to the 
 
 ## Getting Started
 ### Dependencies
-- A supported client operating system (macOS or Linux)
+- A supported client operating system (Windows / macOS / Linux)
 - Python 3.9 or later
 - [Nmap](https://nmap.org/) 7.99 or later (must be present in $PATH)
 
