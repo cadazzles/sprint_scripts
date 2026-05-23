@@ -62,7 +62,11 @@ def get_ip_geolocation(target_ip, is_public_ip):
     # Uses requests to send HTTP GET to ip-api's endpoint if we have a public IP
     if is_public_ip:
         try:
-            api_response = requests.get(f'http://ip-api.com/json/{target_ip}')
+            api_response = requests.get(f'http://ip-api.com/json/{target_ip}', timeout=10)
+        except requests.exceptions.Timeout:
+            print(f'ERROR: The attempt to form a connection to the ip-api.com API took too long!')
+            print('Exiting...')
+            sys.exit(1)
         except Exception as e:
             # Handle errors: inaccessible api endpoint, response taking too long due to network issues, etc
             print(f'ERROR: Failed to retrieve a result from ip-api.com endpoint - Reason: {e}.')
