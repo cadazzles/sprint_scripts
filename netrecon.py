@@ -147,7 +147,6 @@ def export_to_csv(target_geolocation, target_scan_data, is_public_ip, output_fil
                     writer.writerow(['Local/Private IP (no geolocation data)'])
                 else:
                     writer.writerow(['API Error: failed to obtain geolocation data'])
-                writer.writerow(['Protocol', 'Port', 'Service', 'State'])
                 for host in target_scan_data.all_hosts():
                     for proto in target_scan_data[host].all_protocols():
                         sorted_ports = sorted(target_scan_data[host][proto].keys())
