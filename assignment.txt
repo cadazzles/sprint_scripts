@@ -1,0 +1,39 @@
+Sprint 4 Script: healthmon.py
+
+
+For Sprint 4, your goal is to write a valid python script called healthmon.py that meets the criteria listed below. Make sure your script follows our hygiene requirements. Your script must be submitted via your sprint_scripts GitHub repo to a branch named sprint4-healthmon, not here on Canvas or email. Here on this Canvas assignment, you must submit the URL link to your sprint4-healthmon branch.
+
+
+Objectives
+
+- Build a health monitoring script with configurable thresholds
+- Use the Python logging module for all output (no print)
+- Write alerts to syslog when thresholds are breached
+- Schedule automated checks with cron
+
+- Write a well documented, followable README
+
+Inputs
+
+- Script takes a config file as an argument: healthmon.py <config.json>
+- Add --check flag to display a summary report: healthmon.py <config.json> --check
+- Config file defines thresholds and log file paths (sample provided on Canvas)
+
+Outputs (Submission for Grading)
+
+- A valid Python script named healthmon.py submitted via git
+- A config.json file
+- Evidence that it logs properly (log file content) and writes to syslog
+- Repo: sprint_scripts; Branch: sprint4-healthmon
+
+- Well documented README
+
+Notes
+
+- The script checks: disk usage, memory usage, CPU 1-minute load average, and at least 2 services (e.g., sshd and cron).
+- All thresholds pull from the config file. Nothing should be hardcoded.
+- Use the Python logging module. No print() for output.
+- When a threshold is breached, also write to syslog and to a separate alert log file.
+- Set up a crontab entry to run your script on a schedule. 
+- To test alerts: temporarily lower a threshold in config.json, or use stress-ng for CPU load, or stop a service with sudo systemctl stop cron (start it again after).
+- Handle bad input gracefully. A script shouldn't silently fail or throw an unhelpful error if unexpected input is found. It should prompt the user to fix the input.
