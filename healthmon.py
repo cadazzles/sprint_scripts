@@ -144,6 +144,7 @@ def collect_all(config):
     health_stats['cpu'] = get_cpu_health(config)
     health_stats['mem'] = get_mem_health(config)
     health_stats['disk'] = get_disk_health(config)
+    health_stats['services'] = {}
     for service in config['checks']['services']:
         health_stats['services'][service] = get_service_health(service)
     
