@@ -5,6 +5,6 @@
         "cpu_load_1min": 2.0,
         "services": ["sshd", "cron"]
     },
-    "log_file": "./logs/healthmon.log",
-    "alert_log": "./logs/alerts.log"
+    "log_file": "./healthmon.log",
+    "alert_log": "./alerts.log"
 }
