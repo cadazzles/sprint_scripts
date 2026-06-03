@@ -168,7 +168,7 @@ def get_cpu_info():
             'physical_cores': psutil.cpu_count(logical=False),
             'logical_cores': psutil.cpu_count(),
             'usage_percent': psutil.cpu_percent(interval=1),
-            'load_1_min': psutil.getloadavg()[0],
+            'load_1_min': round(psutil.getloadavg()[0], 2),
             'frequency': round(psutil.cpu_freq().current / 1000, 2)
         }
     # Print a nice error message in the potential case command doesn't exist
