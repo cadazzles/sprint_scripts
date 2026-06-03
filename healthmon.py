@@ -41,7 +41,7 @@ def check_if_os_supported():
         sys.exit(1)
     else:
         try:
-            subprocess.run('systemctl')
+            subprocess.run(['systemctl', 'is-system-running'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         except FileNotFoundError:
             logger.error(f'ERROR: This system is not using systemd for init and is not supported. Please run this script from a Linux system with systemd.')
             sys.exit(1)
@@ -117,7 +117,7 @@ def get_service_health(service):
                 'available': False
             }
     except FileNotFoundError:
-        logger.error('ERROR: Failed to run systemctl on this system. Please make sure systemd is installed and working properly.')
+        logger.error('ERROR: Failed to run systemctl on this system. Please make sure systemd is working properly.')
         sys.exit(1)
 
 def create_log_handlers(config, is_verbose_mode):
