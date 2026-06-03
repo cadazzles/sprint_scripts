@@ -159,7 +159,7 @@ def log_health_events(config, health_stats):
         logger.warning(f'Disk usage at {health_stats['disk']['disk_load']}%, expected {config['checks']['disk_usage_percent']}%')
     for service in health_stats['services']:
         if health_stats['services'][service]['available'] == False:
-            logger.error(f'System service {service} is not available!!!')
+            logger.error(f'System service {service} is dead/not available!!')
 
 
 if __name__ == '__main__':
