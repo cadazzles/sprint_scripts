@@ -11,7 +11,7 @@ healthmon takes a JSON file as input (see `config.json`), which contains thresho
 - CPU 1-minute load average
 - `systemd` services that must be alive
 
-While the script runs, if any of these thresholds are exceeded, a `WARNING` message is logged to `log_file`, `alert_log` (both configurable in the config JSON) and the system's syslog. Optional console printing is available via a command line flag.
+While the script runs, if any of these thresholds are exceeded, a `WARNING`/`ERROR` message is logged to `log_file`, `alert_log` (both configurable in the config JSON) and the system's syslog. Optional console printing is available via a command line flag.
 
 This script is primarily meant to be run on an automatic schedule (i.e. via `cron`).
 
