@@ -1,6 +1,8 @@
-# Temporarily ignore log files for now
-logs/
+# Allow logs
+!healthmon.log
+!alerts.log
 
+# Ignore macOS files
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
