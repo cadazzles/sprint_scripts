@@ -1,0 +1,5 @@
+2026-06-05 21:24:08,907 [INFO] healthmon: CPU 1 minute load average at/below threshold value 0.1
+2026-06-05 21:24:08,907 [WARNING] healthmon: Memory usage at 2.8%, expected 1%
+2026-06-05 21:24:08,908 [INFO] healthmon: Disk usage at/below threshold 1%
+2026-06-05 21:24:08,908 [ERROR] healthmon: System service sshd is dead/not available!!
+2026-06-05 21:24:08,908 [INFO] healthmon: System service cron status nominal.
