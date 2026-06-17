@@ -1,0 +1,47 @@
+Sprint 5: Ansible Playbooks
+
+
+For Sprint 5, your goal is to write two Ansible playbooks that meet the criteria listed below.  Your playbooks must be submitted via your sprint_scripts GitHub repo to a branch named sprint5-ansible, not here on Canvas or email. Here on this Canvas assignment, you must submit the URL link to your sprint5-ansible branch.
+
+Before starting: Complete the Ansible Environment Setup LabDownload Ansible Environment Setup Lab to set up your second AWS box and verify Ansible connectivity between both boxes.
+
+*Note - If you are not using AWS Academy, the instructions above will still work for GCP or a local VM. The main points are that you'll need to build a second VM, ensure network connectivity exists between your two VMs, SSH is allowed between the VMs, and install ansible. Also, if the instructions show strikethroughs in the preview, just download the file.
+
+
+Objectives
+
+- Write Ansible playbooks that configure and deploy to your AWS Linux servers
+- Manage two boxes from one control node
+- Demonstrate idempotency (running twice produces no changes on second run)
+
+- Write a well documented, followable README
+
+Inputs
+
+- An inventory file targeting both of your AWS boxes (from the setup lab)
+- Your healthmon.py and config.json from Sprint 4
+
+ 
+
+Outputs (Submission for Grading)
+
+- configure.yml — system configuration playbook
+- deploy.yml — script deployment playbook
+- inventory.ini — Ansible inventory file with both boxes
+- Screenshots showing: first run output (with changes) and second run output (0 changed)
+- Repo: sprint_scripts; Branch: sprint5-ansible
+
+- Well documented README
+
+Notes
+- configure.yml configures your servers. This includes installing packages, creating a user account, hardening SSH, setting the timezone, and ensuring rsyslog is running. Think about what a newly provisioned server needs before it's ready for production. This playbook should target both boxes.
+- deploy.yml deploys your Sprint 4 monitoring scripts to your servers. This includes creating a directory structure, copying your scripts and config files, installing any Python dependencies, and scheduling your health check via cron. This playbook should target both boxes.
+- Both playbooks must:
+
+Use variables for anything that might change (paths, usernames, packages, etc.)
+Have descriptive names on every task
+Be idempotent. Running twice produces 0 changes on the second run
+Run with:
+
+ansible-playbook -i inventory.ini configure.yml
+ansible-playbook -i inventory.ini deploy.yml
