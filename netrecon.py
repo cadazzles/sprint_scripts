@@ -6,7 +6,7 @@
 # to a CSV file. Contains built-in SSH client via Paramiko for connecting to open hosts.
 #
 # Licensed under the MIT License (https://opensource.org/license/mit)
-# AlecWandy-20260515: Initial version
+# AlecWandy-20260617: v1.1 - Ignores filtered ports
 
 # Imports
 import sys
