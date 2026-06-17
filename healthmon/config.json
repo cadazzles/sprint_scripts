@@ -1,0 +1,10 @@
+{
+    "checks": {
+        "disk_usage_percent": 1,
+        "memory_usage_percent": 1,
+        "cpu_load_1min": 0.1,
+        "services": ["sshd", "cron"]
+    },
+    "log_file": "./healthmon.log",
+    "alert_log": "./alerts.log"
+}
