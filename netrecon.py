@@ -80,7 +80,7 @@ def get_open_ports(target_ip):
     nm = nmap.PortScanner()
     # Scan target IP address for most common open ports + retrieve service information
     try:
-        nm.scan(target_ip, arguments='-sV')
+        nm.scan(target_ip, arguments='--open -sV')
     except nmap.PortScannerError:
         # Catch error if nmap is not installed on the system, as we don't install it via pip
         print('ERROR: Couldn\'t find Nmap on your system. Try installing it via your package manager or by browsing to https://nmap.org.')
