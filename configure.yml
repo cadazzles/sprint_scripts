@@ -5,7 +5,7 @@
   vars:
     # Hash generated via command
     # ansible all -i localhost, -m debug -a "msg={{ 'Password123' | password_hash('sha512') }}"
-    # It's not very secure, so obviously generate your own password and replace it here
+    # It's not very secure, so obviously generate your own password hash and replace it here
     new_user_acct_name: "management"
     new_user_acct_hash: "$6$rounds=656000$uhd88GwZFsnwpJQU$kbGoqjDjOnjEg63O71gMUc27sNBzLL3EypD8zabtAh/5CcrkL/123hA1tLKrn8EuRHz/qOuzU5DCAQxKhFT870"
     required_packages:
