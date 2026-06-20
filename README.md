@@ -57,6 +57,27 @@ These are module dependencies specifically for `healthmon`, and are installed au
 
 To change what each playbook does or adjust parameters, edit them in a text editor.
 
+## Screenshots
+<figure>
+    <img src="screenshots/configure_first_run.png" alt="configure.yml first run">
+    <figcaption>configure.yml being run for the first time.</figcaption>
+</figure>
+
+<figure>
+    <img src="screenshots/configure_second_run.png" alt="configure.yml second run">
+    <figcaption>configure.yml being run for the second time.</figcaption>
+</figure>
+
+<figure>
+    <img src="screenshots/deploy_first_run.png" alt="deploy.yml first run">
+    <figcaption>deploy.yml being run for the first time.</figcaption>
+</figure>
+
+<figure>
+    <img src="screenshots/deploy_second_run.png" alt="deploy.yml second run">
+    <figcaption>deploy.yml being run for the second time.</figcaption>
+</figure>
+
 ## Known Issues
 None so far.
 
