@@ -40,7 +40,7 @@
         # Change to id_rsa.pub if using RSA instead of ED25519
         key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_ed25519.pub') }}"
         # Declare path for check mode
-        path: "/home/{{ new_user_acct_name}}/.ssh/authorized_keys"
+        path: "/home/{{ new_user_acct_name }}/.ssh/authorized_keys"
 
     # SSH Hardening
     - name: Disable SSH Root Login
