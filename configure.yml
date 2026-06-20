@@ -1,0 +1,99 @@
+---
+- name: Initial configuration tasks for managed Linux boxes
+  hosts: all
+  become: true
+  vars:
+    # Hash generated via command
+    # ansible all -i localhost, -m debug -a "msg={{ 'Password123' | password_hash('sha512') }}"
+    # It's not very secure, so obviously generate your own password and replace it here
+    new_user_acct_name: "management"
+    new_user_acct_hash: "$6$rounds=656000$uhd88GwZFsnwpJQU$kbGoqjDjOnjEg63O71gMUc27sNBzLL3EypD8zabtAh/5CcrkL/123hA1tLKrn8EuRHz/qOuzU5DCAQxKhFT870"
+    required_packages:
+      - python3-pip
+      - python3-virtualenv
+      - python3-venv
+      - git
+      - rsyslog
+    desired_timezone: "America/Los_Angeles"
+
+  tasks:
+    - name: Install required packages for healthmon.py
+      ansible.builtin.package:
+        name: "{{ required_packages }}"
+        state: present
+
+    - name: Create additional user account for internal management
+      ansible.builtin.user:
+        name: "{{ new_user_acct_name }}"
+        state: present
+        shell: /bin/bash
+        groups: sudo
+        append: true
+        password: "{{ new_user_acct_hash }}"
+        update_password: on_create
+        create_home: true
+
+    - name: Deploy SSH key to internal management account
+      ansible.builtin.authorized_key:
+        user: "{{ new_user_acct_name }}"
+        state: present
+        # Change to id_rsa.pub if using RSA instead of ED25519
+        key: "{{ lookup('file', lookup('env', 'HOME') + '/.ssh/id_ed25519.pub') }}"
+        # Declare path for check mode
+        path: "/home/{{ new_user_acct_name}}/.ssh/authorized_keys"
+
+    # SSH Hardening
+    - name: Disable SSH Root Login
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '(?i)^#?PermitRootLogin'
+        line: 'PermitRootLogin no'
+        state: present
+      notify: Restart SSH
+
+    - name: Disable SSH PasswordAuth
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '(?i)^#?PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+        state: present
+      notify: Restart SSH
+
+    - name: Enforce SSH public key authentication
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '(?i)^#?PubkeyAuthentication'
+        line: 'PubkeyAuthentication yes'
+        state: present
+      notify: Restart SSH
+
+    - name: Disable SSH empty passwords
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '(?i)^#?PermitEmptyPasswords'
+        line: 'PermitEmptyPasswords no'
+        state: present
+      notify: Restart SSH
+
+    - name: Set system timezone
+      community.general.timezone:
+        # Change timezone as needed based on location - see /usr/share/zoneinfo
+        name: "{{ desired_timezone }}"
+      notify: Restart cron
+
+    - name: Ensure rsyslog is running
+      ansible.builtin.service:
+        name: rsyslog
+        state: started
+        enabled: true
+
+  handlers:
+    - name: Restart SSH
+      ansible.builtin.service:
+        name: "{{ 'ssh' if ansible_os_family == 'Debian' else 'sshd' }}"
+        state: restarted
+
+    - name: Restart cron
+      ansible.builtin.service:
+        name: "{{ 'cron' if ansible_os_family == 'Debian' else 'crond' }}"
+        state: restarted

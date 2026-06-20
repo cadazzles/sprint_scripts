@@ -1,0 +1,33 @@
+---
+- name: Deploy healthmon script to managed Linux boxes
+  hosts: all
+  become: true
+  vars:
+    script_location: /opt/healthmon
+
+  tasks:
+    - name: Create directory structure for healthmon script
+      ansible.builtin.file:
+        path: "{{ script_location }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Clone healthmon repository from GitHub to script dir
+      ansible.builtin.git:
+        repo: "https://github.com/cadazzles/sprint_scripts.git"
+        dest: "{{ script_location }}"
+        version: sprint4-healthmon
+
+    - name: Install Python packages via pip AND create virtual environment
+      ansible.builtin.pip:
+        requirements: "{{ script_location }}/requirements.txt"
+        virtualenv: "{{ script_location }}/venv"
+        virtualenv_command: python3 -m venv
+
+    - name: Schedule hourly healthmon check
+      ansible.builtin.cron:
+        name: "Invoke healthmon using default config"
+        minute: "0"
+        job: "{{ script_location }}/venv/bin/python {{ script_location }}/healthmon.py {{ script_location }}/config.json"
